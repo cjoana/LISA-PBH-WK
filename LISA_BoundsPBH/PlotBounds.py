@@ -47,13 +47,22 @@ ax.set_yscale('log')
 for bound in sel_files:
 
     f_bound = bound[0]
+    lbl = bound[1]
+    color = bound[2]
 
 
     print(f"loading {f_bound}")
 
     try: 
         x, y = np.loadtxt( datadir + '/' + str(f_bound), unpack=True)
-        plt.plot(x,y)
+
+        # lbl = str(f_bound[:-4])
+        # if color: 
+        #     plt.plot(x,y,  label=lbl, color=color)
+        # else:
+        #     plt.plot(x,y,  label=lbl)
+            
+        plt.plot(x,y,  label=lbl, color=color)
     
     except Exception as e:
         print(f" !!!! dataset {f_bound} has been skipt >> Error:\n {e}")
@@ -64,9 +73,11 @@ for bound in sel_files:
 #Plotting stuff
 
 # plt.axhspan(1, 1.5, facecolor='grey', alpha=0.5)
+
+plt.legend(ncol=2)
    
 plt.ylim(1e-9, 1.1)
-plt.xlim(1e-18, 1e5)
+plt.xlim(5e-19, 1e4)
 
 ax.tick_params(axis="x", bottom=True, top=True, labelbottom=True, labeltop=True)    
 ax.set_xticks(np.logspace(-18, 4, 23), minor=True)
@@ -75,8 +86,8 @@ ax.set_xticklabels([], minor=True)
 plt.xlabel(r'$M_\mathrm{PBH}$ [$M_\odot$]')
 plt.ylabel(r'$f_\mathrm{PBH} (M)$')
 
-plt.savefig(outfile, bbox_inches='tight')
+plt.savefig(outfile, bbox_inches='tight', dpi=600)
     
-plt.show()
+# plt.show()
 
     
