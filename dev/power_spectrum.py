@@ -13,7 +13,7 @@ import sys, os
 FILEPATH = os.path.realpath(__file__)[:-21]
 sys.path.append(FILEPATH + "/src")
 sys.path.append("./src")
-# print(f"FILEPATH = {FILEPATH}")
+print(f"FILEPATH = {FILEPATH}")
 
 from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
 
@@ -275,6 +275,18 @@ class PowerSpectrum:
     user_import = PS_UserImport
     user_function = PS_UserFunction
     vacuum = PS_Vacuum
+
+    def get_defaultPS():
+        
+        if PS_models.default.Pk_model== "powerlaw":
+            return PS_Powerlaw
+        else: 
+            raise("Default powerspectrum not set up. ")
+
+    default = get_defaultPS()
+
+    
+
 
 
 

@@ -46,7 +46,7 @@ sel_files = [
         ["EridanusII.txt",      "Eridanus II",   None   ],
         ["Eros-Macho.txt",      "Eros-MACHO",    None   ], 
         ["FirstClouds.txt",     "First Clouds",  None   ],
-        ["GC_ep.txt",           r"GC $e^pm$",   None   ],
+        ["GC_ep.txt",           r"GC $e^\pm$",   None   ],
         ["GW.txt",              "GW",            None   ],
         ## ["HSC.txt",  ],
         ["HSC_cons.txt",        "HSC",           "gold"   ],

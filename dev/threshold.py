@@ -8,9 +8,7 @@ import scipy.integrate as integrate
 from scipy.integrate import dblquad
 import scipy.optimize as opt
 
-
 from user_params import cosmo_params, physics_units, PBHForm
-
 
 class ClassPBHFormationMusco20:
 
@@ -139,11 +137,86 @@ class ClassPBHFormationMusco20:
         return deltacr
 
 
+class ClassPBHFormationStandard:
+
+    def __init__(self, 
+                       Pk_func, 
+                       pm=PBHForm,                      
+                       k_star=PBHForm.models.Musco20.k_star,                      
+                       cp=cosmo_params,
+                       Pk_scalefactor=PBHForm.Pkscalingfactor):
+        self.pm=pm
+        self.Pk_func=Pk_func
+    
+    def get_deltacr(self):
+
+        deltacr_rad =self.pm.models.standard.zetacr_rad
+        return deltacr_rad
+
+    def get_thermalfactor(self, mPBH, datadir=None, thermal_file=None, zetacr_thermal_rad=None):
+
+        datadir = datadir if datadir else  self.pm.data_directory
+        thermal_file = thermal_file if thermal_file else self.pm.thermal_file
+        zetacr_thermal_rad = zetacr_thermal_rad if zetacr_thermal_rad else self.pm.zetacr_thermal_rad
+
+        # Read file
+        def _read_thermal_file(datadir, thermal_file):     #TODO (put as a separete class?)   
+
+            # returns a vector of zeta_cr and gthe corresponding vector of m_PBHs
+            Npointsinfile = 1501 + 11                                        #TODO: REDO for any file!!! 
+            log_m_in_file = np.zeros(Npointsinfile)
+            zetacr_in_file = np.zeros(Npointsinfile)
+            # Read file of zetacr_thermal as a function of
+            fid_file_path = os.path.join(datadir, thermal_file)
+            if verbose > 2 : print("I use the following file for thermal history: ", fid_file_path)
+            if os.path.exists(fid_file_path):
+                fid_values_exist = True
+                with open(fid_file_path, 'r') as fid_file:
+                    line = fid_file.readline()
+                    while line.find('#') != -1:
+                        line = fid_file.readline()
+                    while (line.find('\n') != -1 and len(line) == 1):
+                        line = fid_file.readline()
+                    for index_mass in range(Npointsinfile):
+                        logmPBH = np.log10(float(line.split()[0]))
+                        log_m_in_file[index_mass] = logmPBH  # np.log10(double(line.split()[0])
+                        zetacr_in_file[index_mass] = float(line.split()[1])
+                        line = fid_file.readline()
+            else:
+                print("!!! Thermal history file : file path not found")
+
+            return log_m_in_file, zetacr_in_file
+        
+        log_m_in_file, zetacr_in_file = _read_thermal_file(datadir, thermal_file)
+        # Returns the factor from thermal history by which one has to multiply the zeta_cr obtained for radiation
+        zetacr_interp = interp1d(log_m_in_file, zetacr_in_file, kind='linear')  # , kind='cubic')
+        logmPBH = np.log10(mPBH)
+        thermal_factor = zetacr_interp(logmPBH) / zetacr_thermal_rad
+        return thermal_factor
+
+
+    def get_deltacr_with_thermalhistory(self, mPBH,
+                                              datadir=None, thermal_file=None, zetacr_thermal_rad=None):
+
+        deltacr_rad = self.get_deltacr()
+        deltacr_with_th = deltacr_rad * self.get_thermalfactor(mPBH,  datadir, thermal_file, zetacr_thermal_rad)
+
+        return deltacr_with_th
+
+
+
+
+
+
+
+
+
+
 
 
 #### TODO:   WORK IN PROGRESS
 
-class ClassPBHFormationStandard:
+class __deprecated__ClassPBHFormationStandard:
 
     def __init__(self, pm=PBHForm, cp=cosmo_params, Pk_model='default', PBHform_model='default'):
         if PBHform_model == 'default':
@@ -243,6 +316,8 @@ class ClassPBHFormationStandard:
 
         return zetacrtable
 
+    ###############################################################################################
+
     def get_logbeta(self, mPBH, use_thermal_history='default'):  #TODO
 
         if use_thermal_history == 'default':
@@ -272,7 +347,7 @@ class ClassPBHFormationStandard:
 
 
         else:
-            raise (ValueError, "Non-Gaussian perturbations are not implemented yet")
+            raise (ValueError, "Non-Gaussian effects are not implemented yet")
 
         return logbeta
 
