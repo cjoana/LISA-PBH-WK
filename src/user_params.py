@@ -13,7 +13,7 @@ Pk_models.Pk_model = 'default'  # e.g.:  'powerlaw' (default), 'broken_powerlaw'
 PBHForm.PBHform_model = 'Musco20'           # e.g.:  'standard' (default), 'Musco20'
 PBHForm.models.Musco20.eta = 0.1
 
-PBHForm.ratio_mPBH_over_mH = 0.8            # Ratio between PBH and Hubble masses at formation
+PBHForm.ratio_mPBH_over_mH = 0.2            # Ratio between PBH and Hubble masses at formation
 PBHForm.kmsun = 2.1e6
 PBHForm.Pkrescaling = True                  # option to rescale the power spectrum to get a fixed DM fraction
 PBHForm.forcedfPBH = 1.                     # Imposed DM fraction made of PBHs

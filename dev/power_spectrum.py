@@ -13,7 +13,7 @@ import sys, os
 FILEPATH = os.path.realpath(__file__)[:-21]
 sys.path.append(FILEPATH + "/src")
 sys.path.append("./src")
-print(f"FILEPATH = {FILEPATH}")
+# print(f"FILEPATH = {FILEPATH}")
 
 from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
 
@@ -41,7 +41,13 @@ class PS_Base:
     def PS(self, kk):
         # PS =  PS_vac(self, kk)
         print(">> Powerspectrum (PS) not specified, assuming PS vacuum.")
-        return  self.PS_vac(self, kk)
+        return  self.PS_vac(kk)
+
+    def PS_plus_vaccumm(self, kk):
+        return self.PS_vac(kk) + self.PS(kk)
+
+
+
     
     def get_children_strings(self):
         list_of_strings = []
@@ -74,7 +80,7 @@ class PS_Base:
 
 class PS_Vacuum(PS_Base):
     def __init__(self, As_cosmo=None, ns_cosmo=None, kstar_cosmo=None, cm=None): 
-
+        super().__init__()
         cm = cm if cm else cosmo_params
         self.As = As_cosmo if As_cosmo else cm.As
         self.ns = ns_cosmo if ns_cosmo else cm.ns
@@ -88,7 +94,7 @@ class PS_Vacuum(PS_Base):
 class PS_Powerlaw(PS_Base):
     
     def __init__(self, As=None, ns=None, kp=None,  ktrans=None, cm=None): 
-
+        super().__init__()
         cm = cm if cm else cosmo_params
         self.As = As if As else PS_models.powerlaw.AsPBH
         self.ns = ns if ns else PS_models.powerlaw.nsPBH

@@ -10,6 +10,10 @@ import scipy.optimize as opt
 
 from user_params import cosmo_params, physics_units, PBHForm
 
+
+verbose = 0
+
+
 class ClassPBHFormationMusco20:
 
     def __init__(self, 
@@ -25,7 +29,7 @@ class ClassPBHFormationMusco20:
         self.cp = cp
         self.Pkscalingfactor = Pk_scalefactor
 
-        if verbose >2: print( 'FormPBHMusco (class) set  Pk to ', Pk_model)
+        # if verbose >2: print( 'FormPBHMusco (class) set  Pk to ', Pk_model)
 
     # List of fnctions for the computations of delta_critical based on the method Musco20
     def TransferFunction(self, k, t):
@@ -34,8 +38,12 @@ class ClassPBHFormationMusco20:
         return 3 * (np.sin(arg) - arg * np.cos(arg)) / arg ** 3
 
     def PowerSpectrum(self, k, t):
-        PkS = ClassPkSpectrum(pkmodel=self.Pk_model, cm=self.cp)
-        P = self.Pk_func(k * self.k_star) * self.Pkscalingfactor
+        # PkS = ClassPkSpectrum(pkmodel=self.Pk_model, cm=self.cp)
+
+        # print("!",  self.Pk_func[0], " and ",  self.Pkscalingfactor)
+        Pk = self.Pk_func[0]    # TODO: weird
+
+        P = Pk(k * self.k_star) * self.Pkscalingfactor
         T =  self.TransferFunction(k, t)
         return 2.*np.pi**2 /(k**3) * P * T**2
 
@@ -74,7 +82,9 @@ class ClassPBHFormationMusco20:
 
         return np.sqrt(disc)
 
-    def get_rm(self, t, guess=1.0, method='root'):
+    def get_rm(self, t=None,  guess=1.0, method='root'):
+
+        t = t if t else self.eta
 
         def func(rm):
             integrand = lambda k: k ** 2 * (
@@ -430,3 +440,7 @@ class __deprecated__ClassPBHFormationStandard:
 
 
 
+#######################################
+
+if __name__ == "__main__":
+    test = 0
