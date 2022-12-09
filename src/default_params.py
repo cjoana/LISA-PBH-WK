@@ -93,7 +93,7 @@ Pk_models.gaussian = Munch(dict())
 Pk_models.gaussian.Pk_model = "gaussian"
 Pk_models.gaussian.kp = 2.e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
 Pk_models.gaussian.AsPBH = 0.0205      # Power spectrum amplitude at the reference scale kp.
-Pk_models.gaussian.sigma = 0.2        # Power spectrum amplitude at the reference scale kp.
+Pk_models.gaussian.sigma = 1. # 0.2    # Power spectrum variance.
 
 # "Broken power-law":
 Pk_models.broken_powerlaw = Munch(dict())

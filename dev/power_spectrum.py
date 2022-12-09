@@ -307,7 +307,7 @@ if __name__ == "__main__":
     # myPS = PowerSpectrum.powerlaw()
     # myPS = PowerSpectrum.broken_powerlaw()
     # myPS = PowerSpectrum.axion_gauge()
-    myPS = PowerSpectrum.preheating()
+    # myPS = PowerSpectrum.preheating()
     # myPS = PowerSpectrum.vacuum()
 
 
@@ -325,4 +325,5 @@ if __name__ == "__main__":
     plt.plot(ks, myPS.PS(ks))
     plt.yscale("log")
     plt.xscale("log")
+    plt.ylim(1e-19, 1)
     plt.show()
