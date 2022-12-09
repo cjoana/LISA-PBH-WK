@@ -219,7 +219,7 @@ class PS_Preheating(PS_Base):
 
 class PS_Multifield(PS_Base):
     
-    def __init__(self, P0=None, eta=None, delta=None, kf=None): 
+    def __init__(self, P0=None, eta=None, delta=None, kf=None, C=None): 
         
         super().__init__()
         self.P0 = P0 if P0 else PS_models.multifield.P0
