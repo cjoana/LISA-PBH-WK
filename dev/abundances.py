@@ -6,6 +6,9 @@ from scipy.interpolate import interp1d
 import scipy.integrate as integrate
 from scipy.integrate import dblquad
 import scipy.optimize as opt
+import matplotlib.pyplot as plt
+
+import matplotlib as mpl
 
 
 import sys, os
@@ -23,7 +26,6 @@ from threshold import ClassPBHFormationMusco20
 
 
 
-import matplotlib.pyplot as plt
 
 class CLASSabundances:
     def __init__(self, 
@@ -212,6 +214,27 @@ class CLASSabundances:
 #######################################
 
 if __name__ == "__main__":
+
+
+    #Specify the plot style
+    mpl.rcParams.update({'font.size': 10,'font.family':'serif'})
+    mpl.rcParams['xtick.major.size'] = 7
+    mpl.rcParams['xtick.major.width'] = 1
+    mpl.rcParams['xtick.minor.size'] = 3
+    mpl.rcParams['xtick.minor.width'] = 1
+    mpl.rcParams['ytick.major.size'] = 7
+    mpl.rcParams['ytick.major.width'] = 1
+    mpl.rcParams['ytick.minor.size'] = 3
+    mpl.rcParams['ytick.minor.width'] = 1
+    mpl.rcParams['xtick.direction'] = 'in'
+    mpl.rcParams['ytick.direction'] = 'in'
+    mpl.rcParams['lines.linewidth'] = 1.5
+    mpl.rcParams['xtick.top'] = True
+    mpl.rcParams['ytick.right'] = True
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rc('text', usetex=True)
+
+    mpl.rcParams['legend.edgecolor'] = 'inherit'
 
 
 

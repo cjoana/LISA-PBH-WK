@@ -10,8 +10,11 @@ print(FILEPATH)
 
 #Default values, overridden if you pass in command line arguments
 listfile_default = FILEPATH + "data_bounds_all.dat" 
-outfile_default = FILEPATH + "plots/PBH_bounds.png"
+# outfile_default = FILEPATH + "plots/PBH_bounds.png"
 datadir =  FILEPATH + "Data" 
+
+outfile = FILEPATH + "plots/PBH_bounds.png"
+outfile2 = FILEPATH + "plots/PBH_bounds_summary.png"
 
 from params_bounds import *
 
@@ -20,12 +23,12 @@ from params_bounds import *
 parser = argparse.ArgumentParser(description='...')
 parser.add_argument('-lf','--listfile', help='File containing list of bounds to include',
                     type=str, default=None)
-parser.add_argument('-of','--outfile', help='Filename (with extension) of output plot', 
-                    type=str, default=outfile_default)
+# parser.add_argument('-of','--outfile', help='Filename (with extension) of output plot', 
+#                     type=str, default=outfile_default)
 
 args = parser.parse_args()
 listfile = args.listfile
-outfile = args.outfile
+# outfile = args.outfile
 
 sel_files = np.loadtxt(listfile, dtype=str, unpack=True) if listfile else sel_files
 
@@ -33,15 +36,9 @@ print(f"listfile is  {listfile}")
 print(f"selected data:   {sel_files}")
 
 
+fig, ax = plt.subplots(1,1, figsize=(8,5))
 
-
-plt.figure(figsize=(8,5))
-
-ax = plt.gca()
-
-ax.set_xscale('log')
-ax.set_yscale('log')
-
+fig2, ax2 = plt.subplots(1,1, figsize=(8,5))
 
 
 for bound in sel_files:
@@ -62,32 +59,41 @@ for bound in sel_files:
         # else:
         #     plt.plot(x,y,  label=lbl)
             
-        plt.plot(x,y,  label=lbl, color=color)
+        ax.plot(x,y,  label=lbl, color=color)
+        ax2.fill_between(x, y, y2=1, color="gray", interpolate=True) 
     
     except Exception as e:
         print(f" !!!! dataset {f_bound} has been skipt >> Error:\n {e}")
     
-    
+
+
 
 
 #Plotting stuff
 
 # plt.axhspan(1, 1.5, facecolor='grey', alpha=0.5)
 
-plt.legend(ncol=2)
-   
-plt.ylim(1e-9, 1.1)
-plt.xlim(5e-19, 1e4)
+ax.legend(ncol=2)
 
-ax.tick_params(axis="x", bottom=True, top=True, labelbottom=True, labeltop=True)    
-ax.set_xticks(np.logspace(-18, 4, 23), minor=True)
-ax.set_xticklabels([], minor=True)
-    
-plt.xlabel(r'$M_\mathrm{PBH}$ [$M_\odot$]')
-plt.ylabel(r'$f_\mathrm{PBH} (M)$')
+for axs in [ax, ax2]:   
+    axs.set_ylim(1e-10, 1.05)
+    axs.set_xlim(5e-19, 1e4)
 
-plt.savefig(outfile, bbox_inches='tight', dpi=600)
+    axs.tick_params(axis="x", bottom=True, top=True, labelbottom=True, labeltop=True)    
+    axs.set_xticks(np.logspace(-18, 4, 23), minor=True)
+    axs.set_xticklabels([], minor=True)
+        
+    axs.set_xlabel(r'$M_\mathrm{PBH}$ [$M_\odot$]')
+    axs.set_ylabel(r'$f_\mathrm{PBH} (M)$')
+
+    axs.set_xscale('log')
+    axs.set_yscale('log')
+
+
+
+fig.savefig(outfile, bbox_inches='tight', dpi=600)
+fig2.savefig(outfile2, bbox_inches='tight', dpi=600)
     
-# plt.show()
+# fig.show()
 
     

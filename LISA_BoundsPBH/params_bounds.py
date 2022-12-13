@@ -3,7 +3,7 @@ import argparse
 
 
 #Specify the plot style
-mpl.rcParams.update({'font.size': 10,'font.family':'serif'})
+mpl.rcParams.update({'font.size': 12,'font.family':'serif'})
 mpl.rcParams['xtick.major.size'] = 7
 mpl.rcParams['xtick.major.width'] = 1
 mpl.rcParams['xtick.minor.size'] = 3
@@ -37,12 +37,12 @@ sel_files = [
         ["DG.txt",                None,         None ],
         ## ["DLFR.txt",  ],
         ["DynamicalFriction.txt", None,         None ],
-        ["EGgamma.txt",          r"$\mathrm{EG}$ $\gamma$",     None ],
+        ["EGgamma.txt",          r"$\mathrm{EG} \gamma$",     None ],
         ## ["EGgamma_v2.txt",  ],
         ## ["EPTA.txt",  ],
         ## ["EPTAALL.txt",  ],
         ["EROS.txt",              "EROS",        None   ],
-        ["ET.txt",                 "ET",         None   ],
+        # ["ET.txt",                 "ET",         None   ],
         ["EridanusII.txt",      "Eridanus II",   None   ],
         ["Eros-Macho.txt",      "Eros-MACHO",    None   ], 
         ["FirstClouds.txt",     "First Clouds",  None   ],
@@ -61,7 +61,7 @@ sel_files = [
         ## ["LIGO.txt",  ],
         ## ["LIGO2.txt",  ],
         ["LIGOconstraintMono.txt",      "LIGO",     "brown"],
-        ["LalphaForest.txt",            r"L$\alpha$",  "blue"  ],
+        ["LalphaForest.txt",            r"L $\alpha$",  "blue"  ],
         ## ["Loebdown.txt",  ],
         ## ["Loebup.txt",  ],
         ## ["LognormalData10.txt",  ],
