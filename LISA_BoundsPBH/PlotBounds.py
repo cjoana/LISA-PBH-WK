@@ -47,7 +47,7 @@ for bound in sel_files:
     lbl = bound[1]
     color = bound[2]
 
-
+    errs = []
     print(f"loading {f_bound}")
 
     try: 
@@ -58,14 +58,20 @@ for bound in sel_files:
         #     plt.plot(x,y,  label=lbl, color=color)
         # else:
         #     plt.plot(x,y,  label=lbl)
-            
+
+        asort = np.argsort(x)
+        x,y = [x[asort], y[asort] ] 
         ax.plot(x,y,  label=lbl, color=color)
         ax2.fill_between(x, y, y2=1, color="gray", interpolate=True) 
     
     except Exception as e:
-        print(f" !!!! dataset {f_bound} has been skipt >> Error:\n {e}")
+        mess = f" !!!! dataset {f_bound} has been skipt >> Error:\n {e}"
+        errs.append[mess]
+        print(mess)
     
 
+for e in errs:
+    print(e)
 
 
 
@@ -77,7 +83,7 @@ ax.legend(ncol=2)
 
 for axs in [ax, ax2]:   
     axs.set_ylim(1e-10, 1.05)
-    axs.set_xlim(5e-19, 1e4)
+    axs.set_xlim(5e-19, 1e8)
 
     axs.tick_params(axis="x", bottom=True, top=True, labelbottom=True, labeltop=True)    
     axs.set_xticks(np.logspace(-18, 4, 23), minor=True)

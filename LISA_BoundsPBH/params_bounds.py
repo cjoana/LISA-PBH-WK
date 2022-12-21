@@ -27,6 +27,7 @@ sel_files = [
 #       ["filename",   "legend dset",     "colour" ,  "marker" ,  ...     ]
         ## ["AEDGE.txt",  ],
         ## ["AION100.txt",  ],
+        ["cmb_dist.txt",           "CMB dist",  "purple"     ],
         ["CMB.txt",                "CMB",       "purple"     ],
         ["CMB_Kamio_coll.txt",     None,        "purple"     ],
         ["CMB_Kamio_photo.txt",    None,        "purple"     ],
@@ -90,6 +91,7 @@ sel_files = [
         ["WideBinaries.txt",     "Wide Binaries",     None ],
         ["XRayB.txt",            "Xray Binaries",     "red" ],
         ["Xray.txt",             None ,     None ],
+        ["xray_ziparo22.txt",    None ,     'red' ],
         ## ["delta_c_EOS.txt",  ],   ##??? 
         ## ["gstar(T).txt",  ],          ## 4 columns  with weird first values (1e-6 -- 1e16)
         ## ["mudistorsion.txt",  ],      #INVISIBLE
