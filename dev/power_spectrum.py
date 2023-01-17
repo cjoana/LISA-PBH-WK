@@ -45,9 +45,6 @@ class PS_Base:
 
     def PS_plus_vaccumm(self, kk):
         return self.PS_vac(kk) + self.PS(kk)
-
-
-
     
     def get_children_strings(self):
         list_of_strings = []
@@ -219,13 +216,12 @@ class PS_Preheating(PS_Base):
 
 class PS_Multifield(PS_Base):
     
-    def __init__(self, P0=None, eta=None, delta=None, kf=None, C=None): 
+    def __init__(self, P0=None, eta=None, delta=None, kf=None): 
         
         super().__init__()
         self.P0 = P0 if P0 else PS_models.multifield.P0
         self.eta = eta if eta else PS_models.multifield.eta
         self.delta = delta if delta else PS_models.multifield.delta
-        self.C = C if C else PS_models.multifield.C
         self.kf = kf if kf else PS_models.multifield.kf
 
 
@@ -275,9 +271,11 @@ class PowerSpectrum:
 
     gaussian = PS_Gaussian
     powerlaw = PS_Powerlaw
+    lognormal = PS_LogNormal
     broken_powerlaw = PS_BrokenPowerlaw
     axion_gauge = PS_AxionGauge
     preheating = PS_Preheating
+    multifield = PS_Multifield
     user_import = PS_UserImport
     user_function = PS_UserFunction
     vacuum = PS_Vacuum
@@ -291,7 +289,18 @@ class PowerSpectrum:
 
     default = get_defaultPS()
 
-    
+    def get_model(model, **kargs):
+
+        if model=="gaussian": return PowerSpectrum.gaussian(kargs)
+        if model=="powerlaw": return PowerSpectrum.powerlaw(kargs)
+        if model=="lognormal": return PowerSpectrum.lognormal(kargs)
+        if model=="broken_powerlaw": return PowerSpectrum.broken_powerlaw(kargs)
+        if model=="axion_gauge": return PowerSpectrum.axion_gauge(kargs)
+        if model=="preheating": return PowerSpectrum.preheating(kargs)
+        if model=="multifield": return PowerSpectrum.multifield(kargs)
+
+
+   
 
 
 
