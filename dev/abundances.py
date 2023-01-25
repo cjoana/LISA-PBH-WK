@@ -22,7 +22,7 @@ from user_params import cosmo_params, physics_units, PBHForm
 
 from power_spectrum import PowerSpectrum
 
-from threshold import ClassPBHFormationMusco20
+# from threshold import ClassPBHFormationMusco20
 
 
 
@@ -35,7 +35,7 @@ class CLASSabundances:
                     gaussian=True):
         
         self.Pkm = powerspectrum if powerspectrum else PowerSpectrum.gaussian() 
-        self.Pk = PS_function if PS_function else self.Pkm.PS_plus_vaccumm
+        self.Pk = PS_function if PS_function else self.Pkm.PS_plus_vaccumm          #TODO warning: perhaps is better set somewhere else. 
           
         self.Pkrescaling = scaling
         self.Pkscalingfactor = scaling if isinstance(scaling, float) else 1.0 
@@ -178,8 +178,8 @@ class CLASSabundances:
 
             kint = 1/RH
             # Integrate
-            kmin = kint * 1e-4    # Clever integration countours ( + speeds & precition ) making use of window-function effect
-            kmax = kint * 1e2
+            kmin = kint * 1e-3    # Clever integration countours ( + speeds & precition ) making use of window-function effect
+            kmax = kint * 1e3
             sol, err = integrate.quad(_integrator_variance, kmin, kmax,  epsabs= 1e-25, epsrel= 1e-5, limit=int(1e4), limlst=int(1e2) )
             variance =   (16./81) *  sol
             vs.append(variance)
@@ -191,7 +191,9 @@ class CLASSabundances:
     def get_dcrit(self):
 
         # TODO: implement or call threshold class
-        dcrit_default =  0.41  # 0.8
+
+        dcrit_default =  0.41   # In Pi-Wang 2022 they use dc = 0.41 / Similar to Harada or Escriva
+        # dcrit_default =  1.02   # from Clesse default zetacr
 
         return dcrit_default
 
@@ -205,7 +207,8 @@ class CLASSabundances:
         factor = 1.65*1e8 
         h = 0.68
 
-        fPBH = factor * (gamma/0.2)**0.5  * (g_star/106.75)**(-1./4)  * (h/0.68)**(-2) * (mPBH / Msun)**(-0.5) * self.get_beta(mPBH)
+        fPBH = factor * (gamma/0.2)**0.5  * (g_star/106.75)**(-1./4) * \
+                        (h/0.68)**(-2) * (mPBH / Msun)**(-0.5) * self.get_beta(mPBH)
 
         return fPBH
 
@@ -258,20 +261,23 @@ if __name__ == "__main__":
     test = 0
     Msun = physics_units.m_sun
 
-    As = 0.0205 # 1.6e-3
-    sig = 1
-    PS_model = PowerSpectrum.gaussian(As=As, sigma=sig) 
-    # PS_model = PowerSpectrum.broken_powerlaw(As_high=10, As_low=3) 
-    PS_func =  PS_model.PS_plus_vaccumm
-
-
-    a = CLASSabundances(powerspectrum=PS_model, PS_function = PS_model.PS_plus_vaccumm)
+    # As = 3e-3 # 1.6e-3
+    sig =  0.25
+    As = 0.01*sig
+    kp = 1e7
+    PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
+    # PS_model = PowerSpectrum.axion_gauge()    
+    PS_func =  PS_model.PS_plus_vaccumm         # This is the default to calculate sigma and fPBH
+    
+    # a = CLASSabundances(powerspectrum=PS_model, PS_function = PS_model.PS_plus_vaccumm)
+    # a = CLASSabundances(powerspectrum=PS_model)
+    a = CLASSabundances(PS_function = PS_func)
 
     mass = 10**np.linspace(-10,20, 1000)  #* Msun
     # mass = 30 * Msun
 
-    floor = 1e-6
-    beta = a.get_beta(mass)  + floor**4
+    floor = 1e-8
+    beta = a.get_beta(mass)  #+ floor
     fpbh = a.get_fPBH(mass)  + floor
     sigma = a.get_variance(mass)
 
@@ -286,7 +292,8 @@ if __name__ == "__main__":
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylabel(r"$P_\zeta(k)$")
-    ax.set_xlabel(r"$k\ [Mpc^{-1}]$")
+    ax.set_ylim(1e-9, 1.5)
+    ax.axhline(1, color="k", ls="--", alpha=0.5)
     
 
     ax = axs[1]
@@ -303,10 +310,12 @@ if __name__ == "__main__":
     ax.set_ylabel(r"$\beta$")
     ax.set_xlabel(r"$m_{PBH}\ [?]$")
     ax.set_xlim(max(mass), min(mass))
+    ax.set_ylim(beta.max()*1e-8, beta.max()*10)
 
 
     ax = axs[3]
     ax.plot(mass, fpbh)
+    ax.axhline(1, color="k", ls="--", alpha=0.5)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylabel(r"$f_{pbh}$")

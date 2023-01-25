@@ -45,7 +45,7 @@ class PS_Base:
 
     def PS_plus_vaccumm(self, kk):
         return self.PS_vac(kk) + self.PS(kk)
-    
+   
     def get_children_strings(self):
         list_of_strings = []
         out = dict()
@@ -111,7 +111,7 @@ class PS_LogNormal(PS_Base):
         cm = cm if cm else cosmo_params
         self.As = As if As else PS_models.lognormal.AsPBH
         self.sigma = sigma if sigma else PS_models.lognormal.sigma
-        self.kp = kp if kp else PS_models.lognormal.sigma
+        self.kp = kp if kp else PS_models.lognormal.kp
     
     def PS(self, kk):
         
@@ -121,7 +121,7 @@ class PS_LogNormal(PS_Base):
 
 class PS_Gaussian(PS_Base):
     
-    def __init__(self, As=None, sigma=None, kp=None, cm=None): 
+    def __init__(self, As=None, sigma=None, kp=None, cm=None, verbose=False): 
         
         super().__init__()
         cm = cm if cm else cosmo_params
@@ -129,7 +129,7 @@ class PS_Gaussian(PS_Base):
         self.sigma = sigma if sigma else PS_models.gaussian.sigma
         self.kp = kp if kp else PS_models.gaussian.kp
 
-        print(f"Guassian PS loaded with {self.As}, {self.sigma}, {self.kp} ")
+        if verbose: print(f"Guassian PS loaded with {self.As}, {self.sigma}, {self.kp} ")
     
     
     def PS(self, kk):
@@ -166,18 +166,27 @@ class PS_BrokenPowerlaw(PS_Base):
 
 class PS_AxionGauge(PS_Base):
     
-    def __init__(self, As=None, sigma=None, kp=None, cm=None): 
+    def __init__(self, As=None, sigma=None, kp=None, cm=None, with_vacuum=True): 
         
         super().__init__()
         cm = cm if cm else cosmo_params
         self.As = As if As else PS_models.axion_gauge.AsPBH
         self.sigma = sigma if sigma else PS_models.axion_gauge.sigma
         self.kp = kp if kp else PS_models.axion_gauge.kp
+        self.with_vacuum = with_vacuum
     
     
-    def PS(self, kk):
+    def PS_without_vacuum(self, kk):
         PS = self.As * np.exp(- np.log(kk / self.kp) ** 2 / (2 * self.sigma ** 2))
         return PS
+
+    def PS(self, kk):
+        if self.with_vacuum:
+            return self.PS_vac(kk) + self.PS_without_vacuum(kk) 
+        else:
+            return self.PS_without_vacuum(kk) 
+            # PS = self.As * np.exp(- np.log(kk / self.kp) ** 2 / (2 * self.sigma ** 2))
+            # return PS
 
 
 class PS_Preheating(PS_Base):
@@ -204,8 +213,8 @@ class PS_Preheating(PS_Base):
 
         PS = np.zeros_like(kk)
         mask = (kk < self.kend)
-        P0 = self.Hstar**2 / (8 * np.pi**2 * pu.m_planck**2  * self.e1)             #TODO : define Hstar as function of As??
-        PS[~mask] = P0
+        P0 = self.Hstar**2 / ( self.e1 *8 * np.pi**2 * pu.m_planck**2 )               #TODO : define Hstar as function of As??
+        PS[~mask] = P0 
         PS[mask] = self.Hstar**2 / (8 * np.pi**2 * pu.m_planck**2  * self.e1) * \
                 (1 + (kk[mask]/self.kend)**2) * (1 - 2*(self.C+1)*self.e1 - self.C * self.e2)
         
@@ -233,12 +242,12 @@ class PS_Multifield(PS_Base):
         PS = np.zeros_like(kk)
         kappa = kk/self.kf
         arg = (2-kappa)*kappa
-        mask = (kappa < 1.8)
+        mask = (kappa < 1.7)
 
         PS[~mask] = self.P0
         PS[mask] = self.P0 * np.exp(2*np.sqrt(arg[mask])*self.eta*self.delta) / (2*arg[mask]) * \
             np.sin(np.exp(-self.delta/2)*kappa[mask]*self.eta + np.arctan(kappa[mask]/np.sqrt(arg[mask])))
-        return PS
+        return PS 
 
 
 class PS_UserImport(PS_Base):
@@ -298,6 +307,7 @@ class PowerSpectrum:
         if model=="axion_gauge": return PowerSpectrum.axion_gauge(kargs)
         if model=="preheating": return PowerSpectrum.preheating(kargs)
         if model=="multifield": return PowerSpectrum.multifield(kargs)
+        if model=="vacuum": return PowerSpectrum.vacuum(kargs)
 
 
    

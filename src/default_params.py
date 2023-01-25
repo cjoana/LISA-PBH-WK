@@ -76,7 +76,7 @@ Pk_models.default.Pk_model = 'powerlaw'
 #  Power law:
 Pk_models.powerlaw = Munch(dict())
 Pk_models.powerlaw.Pk_model = "powerlaw"
-Pk_models.powerlaw.ktrans = 1.e0     # Scale of the transition between CMB amplitude and PBH amplitude
+Pk_models.powerlaw.ktrans = 1.e0      # Scale of the transition between CMB amplitude and PBH amplitude
 Pk_models.powerlaw.nsPBH = 0.97       # Spectral index
 Pk_models.powerlaw.kp = 2.e6          # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
 Pk_models.powerlaw.AsPBH = 0.0205     # Power spectrum amplitude at the reference scale kp.
@@ -93,7 +93,7 @@ Pk_models.gaussian = Munch(dict())
 Pk_models.gaussian.Pk_model = "gaussian"
 Pk_models.gaussian.kp = 2.e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
 Pk_models.gaussian.AsPBH = 0.0205      # Power spectrum amplitude at the reference scale kp.
-Pk_models.gaussian.sigma = 1. # 0.2    # Power spectrum variance.
+Pk_models.gaussian.sigma =  0.2        # Power spectrum variance.
 
 # "Broken power-law":
 Pk_models.broken_powerlaw = Munch(dict())
@@ -112,16 +112,16 @@ Pk_models.broken_powerlaw.ns_high = -0.5
 Pk_models.multifield = Munch(dict())
 Pk_models.multifield.Pk_model = "multifield"
 Pk_models.multifield.kf = 2e6          # scale H-crossing at sharp turn  [mpc^-1]
-Pk_models.multifield.P0 = 0.0205         # Amplitude Pk in absence of transient instability
-Pk_models.multifield.eta = 10           # TODO: check value
-Pk_models.multifield.delta = 0.1          # TODO: check value
+Pk_models.multifield.P0 = 2e-9        # Amplitude Pk in absence of transient instability
+Pk_models.multifield.eta = 4.           # TODO: check value
+Pk_models.multifield.delta = 2.2          # TODO: check value
 Pk_models.multifield.kp = Pk_models.multifield.kf
 
 
 # "Power spectrum from axion-gauge"
 Pk_models.axion_gauge = Munch(dict())
 Pk_models.axion_gauge.Pk_model = "axion_gauge"
-Pk_models.axion_gauge.kp = 2.e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+Pk_models.axion_gauge.kp = 2.1e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
 Pk_models.axion_gauge.As_vac = 0.0205      # TODO: k-dependent
 Pk_models.axion_gauge.AsPBH = 0.0205      # TODO: k-dependent
 Pk_models.axion_gauge.sigma = 1.          # TODO: k-dependent
@@ -130,10 +130,10 @@ Pk_models.axion_gauge.sigma = 1.          # TODO: k-dependent
 Pk_models.preheating = Munch(dict())
 Pk_models.preheating.Pk_model = "preheating"
 Pk_models.preheating.kend = 2.e6     #
-Pk_models.preheating.Hstar = 1.0e18      # TODO: k-dependent
+Pk_models.preheating.Hstar = 1.0e14      # TODO: k-dependent
 Pk_models.preheating.e1 = 0.01           # TODO: k-dependent
-Pk_models.preheating.e2 = 0.0            # TODO: k-dependent
-Pk_models.preheating.C = -0.7296         # numerical constant (See WhitePaper eq 2.20)
+Pk_models.preheating.e2 = 0.0001            # TODO: k-dependent
+Pk_models.preheating.C = -0.7296          
 Pk_models.preheating.kp = Pk_models.preheating.kend
 
 
@@ -172,7 +172,7 @@ PBHForm.models.default.PBHform_model = 'standard'
 # standard formation model
 PBHForm.models.standard = Munch(dict())
 PBHForm.models.standard.PBHform_model = "standard"
-PBHForm.models.standard.zetacr_rad = 1.02
+PBHForm.models.standard.deltacr_rad = 0.41  #1.02
 
 # Musco20 formation model
 PBHForm.models.Musco20 = Munch(dict())

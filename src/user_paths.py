@@ -1,4 +1,4 @@
-prjdir = "/home/cjoana/git/pbh-toolbox/PrimBHoles_code"
+prjdir = "/home/cjoana/git/LISA-PBH-WG"
 datadir = prjdir + "/data"
 figdir = prjdir + "/figures"
 zetacr_file = "zetacr.dat"
