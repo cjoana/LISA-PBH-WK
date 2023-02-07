@@ -11,7 +11,7 @@ print(FILEPATH)
 #Default values, overridden if you pass in command line arguments
 listfile_default = FILEPATH + "data_bounds_all.dat" 
 # outfile_default = FILEPATH + "plots/PBH_bounds.png"
-datadir =  FILEPATH + "Data" 
+datadir =  FILEPATH + "data" 
 
 outfile = FILEPATH + "plots/PBH_bounds.png"
 outfile2 = FILEPATH + "plots/PBH_bounds_summary.png"

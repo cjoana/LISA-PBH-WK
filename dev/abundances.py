@@ -21,6 +21,7 @@ print(f"FILEPATH = {FILEPATH}")
 from user_params import cosmo_params, physics_units, PBHForm
 
 from power_spectrum import PowerSpectrum
+from threshold import ClassThresholds
 
 # from threshold import ClassPBHFormationMusco20
 
@@ -32,19 +33,23 @@ class CLASSabundances:
                     powerspectrum=None, 
                     PS_function = None,
                     scaling=False,
-                    gaussian=True):
+                    gaussian=True,
+                    threshold_method='standard',
+                    thermal_history = True):
         
-        self.Pkm = powerspectrum if powerspectrum else PowerSpectrum.gaussian() 
-        self.Pk = PS_function if PS_function else self.Pkm.PS_plus_vaccumm          #TODO warning: perhaps is better set somewhere else. 
+        self.PS_model = powerspectrum if powerspectrum else PowerSpectrum.gaussian() 
+        self.PS_func = PS_function if PS_function else self.PS_model.PS_plus_vaccumm          #TODO warning: perhaps is better set somewhere else. 
           
-        self.Pkrescaling = scaling
-        self.Pkscalingfactor = scaling if isinstance(scaling, float) else 1.0 
+        self.PS_rescaling = scaling
+        self.PS_scalingfactor = scaling if isinstance(scaling, float) else 1.0 
         self.Gaussian = gaussian
         self.rescaling_is_done = True if isinstance(scaling, float) else False
+        self.threshold_method=threshold_method
+        self.thermal_history = thermal_history
 
 
     def myPk(self, k):
-        return self.Pk(k)
+        return self.PS_func(k)
 
     
     def get_beta(self, mPBH, method="integration"):
@@ -53,7 +58,7 @@ class CLASSabundances:
             return self.get_beta_anal_approx(mPBH)        #Testing 
 
         if method == "integration":
-            dcrit = self.get_dcrit()
+            dcrit = self.get_dcrit(mPBH=mPBH)
             sigma = self.get_variance(mPBH) **0.5       
 
             if isinstance(sigma, (float, int)) : 
@@ -95,10 +100,10 @@ class CLASSabundances:
         kmsun = 2.1e6
         limit_for_using_erfc =  20. 
 
-        dcrit = self.get_dcrit()
+        dcrit = self.get_dcrit(mPBH=mPBH)
         mH = mPBH / ratio_mPBH_over_mH
         kk = kmsun / mH ** (0.5)  # S. Clesse: to be checked
-        Pofk = self.Pk(kk)
+        Pofk = self.PS_func(kk)
         
         
         argerfc = dcrit / (2. * Pofk) ** (1. / 2.)
@@ -121,7 +126,7 @@ class CLASSabundances:
         print("WARNING", k, delta_PS)
         return delta_PS
 
-    
+
     def get_window_function(self, k, r, method="default"):
 
         # NOTE:  The effect on the choice of the window function (plus transfer function) is enourmous
@@ -146,7 +151,6 @@ class CLASSabundances:
             m = f"error in get_window_function: method {method} is not configured." 
             raise Exception(m)
         
-
 
     def get_scalesize(self, mPBH):
 
@@ -188,14 +192,27 @@ class CLASSabundances:
 
         return vs
     
-    def get_dcrit(self):
+
+    def get_dcrit(self, mPBH = False):
 
         # TODO: implement or call threshold class
+        self.threshold_method = "Musco20"
 
-        dcrit_default =  0.41   # In Pi-Wang 2022 they use dc = 0.41 / Similar to Harada or Escriva
-        # dcrit_default =  1.02   # from Clesse default zetacr
+        Msun = physics_units.m_sun
 
-        return dcrit_default
+        if self.threshold_method == "standard":
+            if self.thermal_history: return ClassThresholds.standard(PS_func=self.PS_func).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.standard(PS_func=self.PS_func).get_deltacr()
+
+        elif self.threshold_method == "Musco20":
+            if self.thermal_history: return ClassThresholds.Musco20(PS_func=self.PS_func).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.Musco20(PS_func=self.PS_func).get_deltacr()
+
+        else:
+            raise ("selected method for evaluating PBH threshold is not yet suported.")
+            dcrit_default =  0.41   # In Pi-Wang 2022 they use dc = 0.41 / Similar to Harada or Escriva
+            # dcrit_default =  1.02   # from Clesse default zetacr
+            return dcrit_default
 
 
     def get_fPBH(self, mPBH):

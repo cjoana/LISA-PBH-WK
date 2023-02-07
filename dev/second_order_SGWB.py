@@ -41,7 +41,7 @@ class SecondOrderSGWB():
         return value
 
     
-    def eval_oldcode(self):
+    def eval_oldcode(self, kvals):
 
         # Compute the SGWB from 2nd order perturbations
         print("Step 2:  Computation of the GW spectrum from denstiy perurbations at second order")
@@ -52,7 +52,8 @@ class SecondOrderSGWB():
         sigmaps = 0.5
         print("ks = ", ks)
 
-        kvals = np.logspace(np.log10(self.kmin), np.log10(self.kmax), self.nk)
+        # kvals = np.logspace(np.log10(self.kmin), np.log10(self.kmax), self.nk)
+
         # print self.Pk(kvals * self.mpc /self.c) * self.Pkscalingfactor
         # print "coucou 2nd order GW"
         kres = np.array([self.compint(xi, sigmaps) for xi in kvals])
@@ -61,7 +62,7 @@ class SecondOrderSGWB():
         Omega_r_0 = 2.473 * 1e-5
         norm = self.ratio_mPBH_over_mH * Omega_r_0 / 972.
 
-        #        self.k_2ndOmGW= ks*kvals
+        #  self.k_2ndOmGW= ks*kvals
         self.freq_2ndOmGW = ks * kvals / 2. /np.pi
         # print "Second coucou 2nd order GW"
         self.OmGW_2ndOmGW = norm * kres

@@ -253,6 +253,10 @@ class ClassPBHFormationStandard(ClassDeltaCritical):
         deltacr_rad =self.pm.models.standard.deltacr_rad
         return deltacr_rad
 
+class ClassThresholds:
+    standard = ClassPBHFormationStandard
+    Musco20 = ClassPBHFormationMusco20
+
 
 #### TODO:   WORK IN PROGRESS
 
