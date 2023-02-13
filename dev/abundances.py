@@ -63,29 +63,33 @@ class CLASSabundances:
 
             if isinstance(sigma, (float, int)) : 
                 sigma = np.array([sigma])
+            if isinstance(dcrit, (float, int)) :
+                dcrit = dcrit * np.ones_like(sigma)
 
             betas = []
-            for sig in sigma: 
+            for i_s, sig in enumerate(sigma): 
 
-                do_integration = False    
+                do_integration = False    #TODO : specify! (I checked, gives aprox the same)
                 if do_integration: 
                     def _integrator_PDF(delta):
                         # returns the dark matter density fraction of PBH today f(m_PBH)
                         return  1/np.sqrt(2*np.pi*sig**2) * np.exp(-0.5*(delta/sig)**2)
 
                     # Integrate
-                    init = dcrit
+                    dc = dcrit[i_s]
+                    init = 1e-8
                     end = np.infty
                     sol_D = integrate.quad(_integrator_PDF, init, end,  limit=100000, limlst=10000)[0]
-                    sol_U = integrate.quad(_integrator_PDF, dcrit, end,  limit=100000, limlst=10000)[0]
-                    b_altern = np.exp(-0.5*(dcrit/sig)**2)/np.sqrt(2*np.pi*(dcrit/sig)**2)
+                    sol_U = integrate.quad(_integrator_PDF, dc, end,  limit=100000, limlst=10000)[0]
+                    b_altern = np.exp(-0.5*(dc/sig)**2)/np.sqrt(2*np.pi*(dc/sig)**2)
                     beta = sol_U/sol_D if np.abs(sol_D) > 0 else  b_altern     #erfc(dcrit/np.sqrt(2*sig**2))
                 else:
-                    beta = np.exp(-0.5*(dcrit/sig)**2)/np.sqrt(2*np.pi*(dcrit/sig)**2)   #TODO:  SPi paper or Sebs:  Check if 2gamma is needed
+                    beta = np.exp(-0.5*(dcrit[i_s]/sig)**2)/np.sqrt(2*np.pi*(dcrit[i_s]/sig)**2)   #TODO:  SPi paper or Sebs:  Check if 2gamma is needed
 
                 betas.append(beta)
 
             betas = np.array(betas)
+
 
             return betas
         else:
@@ -196,8 +200,8 @@ class CLASSabundances:
     def get_dcrit(self, mPBH = False):
 
         # TODO: implement or call threshold class
-        self.threshold_method = "Musco20"
-
+        # self.threshold_method = "Musco20"
+        # self.threshold_method = "standard"
         Msun = physics_units.m_sun
 
         if self.threshold_method == "standard":
@@ -278,20 +282,26 @@ if __name__ == "__main__":
     test = 0
     Msun = physics_units.m_sun
 
-    # As = 3e-3 # 1.6e-3
+    ## Model A: Gaussian
     sig =  0.25
     As = 0.01*sig
     kp = 1e7
     PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
-    # PS_model = PowerSpectrum.axion_gauge()    
-    PS_func =  PS_model.PS_plus_vaccumm         # This is the default to calculate sigma and fPBH
     
-    # a = CLASSabundances(powerspectrum=PS_model, PS_function = PS_model.PS_plus_vaccumm)
-    # a = CLASSabundances(powerspectrum=PS_model)
-    a = CLASSabundances(PS_function = PS_func)
+    ## Model B : axion_gauge
+    # PS_model = PowerSpectrum.axion_gauge()    
+    # PS_model = PowerSpectrum.axion_gauge(As=As, sigma=sig, kp=kp)
+    
+    ## Select with vacuum
+    PS_func =  PS_model.PS_plus_vaccumm        # This is the default to calculate sigma and fPBH
+    
+    ## Select threshold calc method
+    a = CLASSabundances(PS_function = PS_func, threshold_method="standard")
+    # a = CLASSabundances(PS_function = PS_func, threshold_method="Musco20")
 
-    mass = 10**np.linspace(-10,20, 1000)  #* Msun
-    # mass = 30 * Msun
+    ## Params range: 
+    # mass = 10**np.linspace(-10,20, 1000)  #* Msun
+    mass = 10**np.linspace(-6,8, 500)  #* Msun
 
     floor = 1e-8
     beta = a.get_beta(mass)  #+ floor
@@ -301,8 +311,6 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(4,1, figsize=(8,8))
 
-
-    kk =  10**np.linspace(-6,18, 1000)
     kk =  k_of_m(mass)
     ax = axs[0]
     ax.plot(kk, PS_func(kk))
@@ -328,7 +336,6 @@ if __name__ == "__main__":
     ax.set_xlabel(r"$m_{PBH}\ [?]$")
     ax.set_xlim(max(mass), min(mass))
     ax.set_ylim(beta.max()*1e-8, beta.max()*10)
-
 
     ax = axs[3]
     ax.plot(mass, fpbh)

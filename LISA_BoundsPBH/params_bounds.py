@@ -24,78 +24,87 @@ mpl.rcParams['legend.edgecolor'] = 'inherit'
 
 
 sel_files = [
-#       ["filename",   "legend dset",     "colour" ,  "marker" ,  ...     ]
-        ## ["AEDGE.txt",  ],
-        ## ["AION100.txt",  ],
-        ["cmb_dist.txt",           "CMB dist",  "purple"     ],
-        ["CMB.txt",                "CMB",       "purple"     ],
-        ["CMB_Kamio_coll.txt",     None,        "purple"     ],
-        ["CMB_Kamio_photo.txt",    None,        "purple"     ],
-        ["CMB_Serpico_P.txt",      None,        "purple"     ],
-        ## ["Cz=0p1.txt",  ],
-        ## ["Cz=0p5.txt",  ],
-        ["Cz=1.txt",              None,         None  ],
-        ["DG.txt",                None,         None ],
-        ## ["DLFR.txt",  ],
-        ["DynamicalFriction.txt", None,         None ],
-        ["EGgamma.txt",          r"$\mathrm{EG} \gamma$",     None ],
-        ## ["EGgamma_v2.txt",  ],
-        ## ["EPTA.txt",  ],
-        ## ["EPTAALL.txt",  ],
-        ["EROS.txt",              "EROS",        None   ],
-        # ["ET.txt",                 "ET",         None   ],
-        ["EridanusII.txt",      "Eridanus II",   None   ],
-        ["Eros-Macho.txt",      "Eros-MACHO",    None   ], 
-        ["FirstClouds.txt",     "First Clouds",  None   ],
-        ["GC_ep.txt",           r"GC $e^\pm$",   None   ],
-        ["GW.txt",              "GW",            None   ],
-        ## ["HSC.txt",  ],
-        ["HSC_cons.txt",        "HSC",           "gold"   ],
-        ["ICARUS.txt",          "ICARUS",        None   ],
-        ## ["INTEGRAL.txt",  ],          #INVISIBLE
-        ## ["INTEGRALSPI.txt",  ],       #INVISIBLE
-        ## ["Iso-X.txt",  ],             #INVISIBLE
-        ## ["JGB.txt",  ],               ## WEIRD
-        ["Kepler.txt",          "Kepler",       None],
-        ["LEoT1.txt",           "LE oT1",       None],
-        ["LEoT2.txt",           "LE oT2",       None],
-        ## ["LIGO.txt",  ],
-        ## ["LIGO2.txt",  ],
-        ["LIGOconstraintMono.txt",      "LIGO",     "brown"],
-        ["LalphaForest.txt",            r"L $\alpha$",  "blue"  ],
-        ## ["Loebdown.txt",  ],
-        ## ["Loebup.txt",  ],
-        ## ["LognormalData10.txt",  ],
-        ## ["LognormalData7.txt",  ],
-        ["MACHO.txt",           "MACHO",     None ],
-        ## ["Mono-NoEvo-10.txt",  ],
-        ## ["Mono-NoEvo-3-noLV.txt",  ],
-        ## ["Mono-NoEvo-3.txt",  ],
-        ## ["Mono-NoEvo-7-noLV.txt",  ],
-        ## ["Mono-NoEvo-7.txt",  ],
-        ## ["Mono-NoEvo.txt",  ],               # SAME AS PlanckDisk
-        ## ["NANOGRAV11.txt",  ],
-        ## ["NaNoGravMaasF.txt",  ],
-        ["OGLE.txt",             "OGLE",     None ],
-        ## ["PPTA.txt",  ],
-        ## ["PPTAEllis.txt",  ],
-        ["PlanckDisk.txt",       "Planck Disk",     'black' ],
-        ["PlanckSpherical.txt",  None,             'black' ],
-        ## ["Radio.txt",  ],                      # INVISIBLE
-        ["SNI.txt",              "SNI",     'green' ],
-        ["SNe.txt",              "SNe",     'darkgreen' ],
-        ["SegueI.txt",           None,     None ],
-        ["UFD.txt",              None,     None ],
-        ["V_epm.txt",            r"V $e^\pm$",     "orange" ],
-        ## ["WD.txt",  ],                  # Reffuted limit (~ 1e-13)
-        ["WideBinaries.txt",     "Wide Binaries",     None ],
-        ["XRayB.txt",            "Xray Binaries",     "red" ],
-        ["Xray.txt",             None ,     None ],
-        ["xray_ziparo22.txt",    None ,     'red' ],
-        ## ["delta_c_EOS.txt",  ],   ##??? 
-        ## ["gstar(T).txt",  ],          ## 4 columns  with weird first values (1e-6 -- 1e16)
-        ## ["mudistorsion.txt",  ],      #INVISIBLE
-        ## ["np.txt",  ],     ## ??
-        ## ["text.txt",  ],   ## ??
+#       ["filename",   "legend dset",     "colour" , "order",  "marker" ,  ...     ]
+        #Low Mass
+        ["V_epm.txt",            r"V $e^\pm$",     "r" , 1 ],
+        ["EGgamma.txt",          r"$\mathrm{EG} \gamma$",     "g" , 1 ],
+        ["GC_ep.txt",           r"GC $e^\pm$",     "b", 1 ],
+        #
+        # Mid Mass
+        ["HSC_cons.txt",        "HSC",           "b"   , 1 ],
+        ["Kepler.txt",          "Kepler",       'gold', None , 2 ],
+        ["EROS.txt",              "EROS",        "black"   , 1 ],
+        ["OGLE.txt",             "OGLE",     'gray' , 1 ],
+        #
+        # High Mass
+        ["ICARUS.txt",          "ICARUS",        'm'   , 1 ],
+        ["SNe.txt",              "SNe",     'orange' , 3 ],
+        ["GW.txt",              "GW",            'brown'   , 3 ],
+        ["xray_ziparo22.txt",    "Xray ziparo22" ,     'orange' , 1 ],
+        ["MACHO.txt",           "MACHO",     'purple' , 2 ],
+        ["PlanckSpherical.txt",  "Planck Spherical",   'gray' , 2 ],
+        ["PlanckDisk.txt",       "Planck Disk",     'black' , 1 ],
+        ["CMB_Kamio_coll.txt",     "CMB K1",        "r"   , 2 ],
+        ["CMB_Kamio_photo.txt",    "CMB K2",        "b"     , 2 ],
+        ["CMB_Serpico_P.txt",      "CMB S",        "k"     , 2 ],
+        ["SegueI.txt",           "segueiI" ,  "pink",  2 ],
+        ["EridanusII.txt",      "Eridanus II",   'pink'   , 2 ],
+        ["XRayB.txt",            "Xray Binaries",     "red" , 2 ],
+        ["LalphaForest.txt",            r"L $\alpha$",  "c"  , 2 ],
+        ["CMB.txt",                "CMB",       "purple"  , 2 ],
+        ["DynamicalFriction.txt", "Dyn. friction",  'darkgreen' , 1 ],
+        ["FirstClouds.txt",     "First Clouds",  'm'   , 2 ],
+        ["LEoT1.txt",           "LE oT1",       'r',    2 ],
+        ["UFD.txt",              "UFD" ,        'g',     3 ],
+        ["WideBinaries.txt",     "Wide Binaries",   'm' , 3 ],
+        ["cmb_dist.txt",           "CMB dist",  "blue"     , 1 ],
+        ["DG.txt",                "DG",         'brown' , 1 ],
+        #
+        #
+        #
+        #
+        ## ["LEoT2.txt",           "LE oT2",       'k',    None ],
+        ## ["Xray.txt",             "Xray2" ,     "green" , 2 ],
+        ## ["LIGOconstraintMono.txt",      "LIGO",     "brown", 3 ],  ## Same as GW
+        ## ["SNI.txt",              "SNI",     'orange' , 3 ],  # Samw as SNe
+        ## ["AEDGE.txt", None , None ],
+        ## ["AION100.txt", None  , None ],
+        ## ["Cz=1.txt",              "Cz=1",         'r'  , None ],   #Same as ICARUS
+        ## ["Cz=0p1.txt", None  , None ],
+        ## ["Cz=0p5.txt", None  , None ],
+        ## ["Eros-Macho.txt",      "Eros-MACHO",    'c'   , None ],   #Same as EROS
+        ## ["EGgamma_v2.txt",  , None ],
+        ## ["EPTA.txt",  , None ],
+        ## ["EPTAALL.txt",  , None ],
+        ## ["DLFR.txt",  , None ],
+        # ["ET.txt",                 "ET",         None   , None ],
+        ## ["HSC.txt",  , None ],
+        ## ["INTEGRAL.txt",  , None ],          #INVISIBLE
+        ## ["INTEGRALSPI.txt",  , None ],       #INVISIBLE
+        ## ["Iso-X.txt",  , None ],             #INVISIBLE
+        ## ["JGB.txt",  , None ],               ## WEIRD
+        ## ["LIGO.txt",  , None ],
+        ## ["LIGO2.txt",  , None ],
+        ## ["Loebdown.txt",  , None ],
+        ## ["Loebup.txt",  , None ],
+        ## ["LognormalData10.txt",  , None ],
+        ## ["LognormalData7.txt",  , None ],
+        ## ["Mono-NoEvo-10.txt",  , None ],
+        ## ["Mono-NoEvo-3-noLV.txt",  , None ],
+        ## ["Mono-NoEvo-3.txt",  , None ],
+        ## ["Mono-NoEvo-7-noLV.txt",  , None ],
+        ## ["Mono-NoEvo-7.txt",  , None ],
+        ## ["Mono-NoEvo.txt",  , None ],               # SAME AS PlanckDisk
+        ## ["NANOGRAV11.txt",  , None ],
+        ## ["NaNoGravMaasF.txt",  , None ],
+        ## ["PPTA.txt",  , None ],
+        ## ["PPTAEllis.txt",  , None ],
+        ## ["Radio.txt",  , None ],                      # INVISIBLE
+        ## ["WD.txt",  , None ],                  # Reffuted limit (~ 1e-13)
+        ## ["delta_c_EOS.txt",  , None ],   ##??? 
+        ## ["gstar(T).txt",  , None ],          ## 4 columns  with weird first values (1e-6 -- 1e16)
+        ## ["mudistorsion.txt",  , None ],      #INVISIBLE
+        ## ["np.txt",  , None ],     ## ??
+        ## ["text.txt",  , None ],   ## ??
 #
 ]

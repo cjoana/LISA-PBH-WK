@@ -75,7 +75,7 @@ class ClassDeltaCritical:
         
         log_m_in_file, zetacr_in_file = _read_thermal_file(datadir, thermal_file)
         # Returns the factor from thermal history by which one has to multiply the zeta_cr obtained for radiation
-        zetacr_interp = interp1d(log_m_in_file, zetacr_in_file, kind='linear')  # , kind='cubic')
+        zetacr_interp = interp1d(log_m_in_file, zetacr_in_file, kind='linear')  
         logmPBH = np.log10(mPBH)
         thermal_factor = zetacr_interp(logmPBH) / zetacr_thermal_rad
         return thermal_factor
@@ -167,7 +167,8 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
             integrand = lambda k: k ** 2 * (
                         (k ** 2 * rm ** 2 - 1) * np.sin(k * rm) / (k * rm) + np.cos(k * rm)) \
                                   * self.PowerSpectrum(k, t)
-            integ = integrate.quad(integrand, 0, np.inf, limit=100000, limlst=10000)
+            integ = integrate.quad(integrand, 0, np.inf, limit=1000, limlst=100)
+            # integ = integrate.quad(integrand, 0, 1e10, limit=100000, limlst=10000)  #TODO: why it crashes without inf
             return integ[0]
 
         if method == 'root':
@@ -491,7 +492,7 @@ if __name__ == "__main__":
     # #TODO: Gaussian model leads to large alpha values >30, Musco method do not work 
     # sig = 0.25 
     # As = 0.01*sig
-    # kp = 1e7
+    # kp = 1e7  # TODO: with 1e6 or 1e8 it crashes!!
     # PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
     # PS_func =  PS_model.PS_plus_vaccumm         # This is the default to calculate sigma and fPBH
         
