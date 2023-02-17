@@ -15,7 +15,21 @@ import scipy.optimize as opt
 
 class MergerRates(): 
 
-    def init(): 
+    def __init__(self): 
+        #TODO : #set up everyting!
+
+        self.Rclust = None
+        self.Nmass = None
+        self.mPBHtable = None
+        self.logfofmPBHtable = None
+
+        self.fsup = 1
+
+        # output
+        self.rate_prim = None
+        self.rate_clust = None
+
+        
         pass
 
         #### 
@@ -27,8 +41,8 @@ class MergerRates():
             m1 = self.mPBHtable[ii]
             for jj in range(ii):
                 m2 = self.mPBHtable[jj]
-                rates[ii, jj] = norm * self.fsup * 10. ** self.logfofmPBHtable[ii] * 10. ** self.logfofmPBHtable[jj] * (
-                            m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
+                rates[ii, jj] = norm * self.fsup * 10. ** self.logfofmPBHtable[ii] * 10. ** self.logfofmPBHtable[jj] * \
+                    (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
         return rates
 
     def rates_clusters(self):
@@ -39,8 +53,8 @@ class MergerRates():
             m1 = self.mPBHtable[ii]
             for jj in range(ii):
                 m2 = self.mPBHtable[jj]
-                rates[ii, jj] = norm * 10. ** self.logfofmPBHtable[ii] * 10. ** self.logfofmPBHtable[jj] * (
-                            m1 + m2) ** (10. / 7.) / (m1 * m2) ** (5. / 7.)
+                rates[ii, jj] = norm * 10. ** self.logfofmPBHtable[ii] * 10. ** self.logfofmPBHtable[jj] * \
+                    (m1 + m2) ** (10. / 7.) / (m1 * m2) ** (5. / 7.)
         return rates
 
     def eval_oldcode(self):
