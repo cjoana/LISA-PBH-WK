@@ -158,7 +158,7 @@ class CLASSabundances:
 
     def get_scalesize(self, mPBH):
 
-        #params to set
+        #TODO: put params  outside 
         ratio_mPBH_over_mH = 0.8
         kmsun = 2.1e6
         mH = mPBH / ratio_mPBH_over_mH
