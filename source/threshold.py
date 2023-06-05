@@ -10,9 +10,11 @@ import scipy.optimize as opt
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-17]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
+FILEPATH = os.path.realpath(__file__)[:-20]
+sys.path.append(FILEPATH + "/source")
+sys.path.append("../source")
+sys.path.append(FILEPATH + "/params")
+sys.path.append("../params")
 print(f"FILEPATH = {FILEPATH}")
 
 from user_params import cosmo_params, physics_units, PBHForm
@@ -69,7 +71,7 @@ class ClassDeltaCritical:
                         zetacr_in_file[index_mass] = float(line.split()[1])
                         line = fid_file.readline()
             else:
-                print("!!! Thermal history file : file path not found")
+                print(f"!!! Thermal history file : file path not found \n ? {fid_file_path}")
 
             return log_m_in_file, zetacr_in_file
         
@@ -257,220 +259,6 @@ class ClassPBHFormationStandard(ClassDeltaCritical):
 class ClassThresholds:
     standard = ClassPBHFormationStandard
     Musco20 = ClassPBHFormationMusco20
-
-
-#### TODO:   WORK IN PROGRESS
-
-# class __deprecated__ClassPBHFormationStandard:
-#     def __init__(self, pm=PBHForm, cp=cosmo_params, Pk_model='default', PBHform_model='default'):
-#         if PBHform_model == 'default':
-#             PBHform_model = pm.PBHform_model
-#         self.pm = pm
-#         self.cp = cp
-#         self.ratio_mPBH_over_mH = pm.ratio_mPBH_over_mH
-#         self.kmsun = pm.kmsun
-#         self.Pkscalingfactor = pm.Pkscalingfactor
-#         self.use_thermal_history = pm.use_thermal_history
-#         self.Pkrescaling = pm.Pkrescaling
-#         self.rescaling_is_done = False
-#         self.forcedfPBH = pm.forcedfPBH
-#         self.use_thermal_history = pm.use_thermal_history
-#         self.data_directory = pm.data_directory
-#         self.zetacr_thermal_file = pm.zetacr_thermal_file
-#         self.zetacr_thermal_rad = pm.zetacr_thermal_rad
-#         self.Gaussian = pm.Gaussian
-#         self.Pk_model = Pk_model
-#         self.PBHform_model = pm.models[PBHform_model].PBHform_model
-
-#         if verbose:
-#             print('FormPBH (class) set  PBHform_model to ', self.PBHform_model)
-#             print('FormPBH (class) set  Pk to ', Pk_model)
-
-
-#     def get_thermalfactor(self, mPBH):
-#         # Read file
-#         def _read_thermal_file(datadir, zetacr_path):     #TODO (put as a separete class?)
-
-#             # returns a vector of zeta_cr and gthe corresponding vector of m_PBHs
-#             Npointsinfile = 1501 + 11
-#             log_m_in_file = np.zeros(Npointsinfile)
-#             zetacr_in_file = np.zeros(Npointsinfile)
-#             # Read file of zetacr_thermal as a function of
-#             fid_file_path = os.path.join(datadir, zetacr_path)
-#             if verbose > 2 : print("I use the following file for thermal history: ", fid_file_path)
-#             if os.path.exists(fid_file_path):
-#                 fid_values_exist = True
-#                 with open(fid_file_path, 'r') as fid_file:
-#                     line = fid_file.readline()
-#                     while line.find('#') != -1:
-#                         line = fid_file.readline()
-#                     while (line.find('\n') != -1 and len(line) == 1):
-#                         line = fid_file.readline()
-#                     for index_mass in range(Npointsinfile):
-#                         logmPBH = np.log10(float(line.split()[0]))
-#                         log_m_in_file[index_mass] = logmPBH  # np.log10(double(line.split()[0])
-#                         zetacr_in_file[index_mass] = float(line.split()[1])
-#                         line = fid_file.readline()
-
-#             return log_m_in_file, zetacr_in_file
-
-#         log_m_in_file, zetacr_in_file = _read_thermal_file(self.data_directory, self.zetacr_thermal_file)
-#         # Returns the factor from thermal history by which one has to multiply the zeta_cr obtained for radiation
-#         zetacr_interp = interp1d(log_m_in_file, zetacr_in_file, kind='linear')  # , kind='cubic')
-#         logmPBH = np.log10(mPBH)
-#         thermal_factor = zetacr_interp(logmPBH) / self.zetacr_thermal_rad
-#         return thermal_factor
-
-#     def get_deltacr(self, method='default'):
-
-
-#         if (method == 'default'):
-#             method = self.PBHform_model
-
-#         # Depends method
-#         if (method=='standard'):
-#             deltacr_rad =self.pm.models.standard.zetacr_rad
-#         elif (method == "Musco20"):
-#             pmm = ClassPBHFormationMusco20(Pk_model=self.Pk_model, cp=self.cp)
-#             deltacr_rad = pmm.get_deltacr()
-#         else:
-#             mess = 'Such method ({m}) is still not implemented yet'.format(m=method)
-#             print(mess)
-#             raise Exception(mess)
-
-#         return deltacr_rad
-
-#     def get_zetacr(self, mPBH, method='default', use_thermal_history='default'):
-
-#         if (method == 'default'):
-#             method = self.PBHform_model
-#         if (use_thermal_history == 'default'):
-#             use_thermal_history = self.use_thermal_history
-
-#         if self.Pkrescaling == True and self.rescaling_is_done == False:
-#             self.calc_scaling(mPBH)
-
-#         zetacr_rad = self.get_deltacr(method=method)
-
-#         # Usage of thermal history
-#         if (use_thermal_history == True):
-#             zetacrtable = zetacr_rad * self.get_thermalfactor(mPBH)
-#         else:
-#             zetacrtable = zetacr_rad
-
-#         return zetacrtable
-
-#     ###############################################################################################
-
-#     def get_logbeta(self, mPBH, use_thermal_history='default'):  #TODO
-
-#         if use_thermal_history == 'default':
-#             use_thermal_history = self.use_thermal_history
-
-#         if self.Pkrescaling == True and self.rescaling_is_done == False:
-#             self.calc_scaling(mPBH)
-
-#         PkS = ClassPkSpectrum(pkmodel=self.Pk_model, cm=self.cp)
-
-#         # returns the density fraction of PBH at formation \beta(m_PBH)
-#         mH = mPBH / self.ratio_mPBH_over_mH
-#         kk = self.kmsun / mH ** (0.5)  # S. Clesse: to be checked
-#         limit_for_using_erfc = 20.                    #TODO hardcoded
-#         Pofk = PkS.Pk(kk) * self.Pkscalingfactor
-
-#         # if verbose: print("323 :: ", Pofk, kk)
-
-#         zetacr = self.get_zetacr(mPBH,  use_thermal_history=use_thermal_history)
-
-#         if (self.Gaussian):
-#             argerfc = zetacr / (2. * Pofk) ** (1. / 2.)
-#             logbeta = np.zeros_like(argerfc)
-#             mask = (argerfc < limit_for_using_erfc)
-#             logbeta[mask] = np.log10(erfc(argerfc[mask]))
-#             logbeta[~mask] = -np.log10(argerfc[~mask] * np.sqrt(np.pi)) - argerfc[~mask] ** 2 / np.log(10.)
-
-
-#         else:
-#             raise (ValueError, "Non-Gaussian effects are not implemented yet")
-
-#         return logbeta
-
-#     def get_k(self, mPBH):
-#         # Returns the scale (in [Mpc^-1] )  for a given PBH mass
-#         mH = mPBH / self.ratio_mPBH_over_mH
-#         kk = self.kmsun * np.sqrt(1. / mH)  # S. Clesse: to check
-#         return kk
-
-#     def calc_scaling(self, mPBH):
-#         # Compute the Rescaling of the power spectrum to get the forcefPBH
-#         def _rootfunction_logfPBH(scaling):
-#             self.Pkscalingfactor = 10. ** scaling
-#             function = self.get_logfPBH(mPBH) - np.log10(self.forcedfPBH)
-#             return function
-
-#         if self.Pkrescaling == False:
-#             raise Exception('Error: rescaling of the power spectrum when not allowed (ie. Pkrescaling = False)')
-#         self.rescaling_is_done = True  # Needed to stop/avoid bucle
-
-#         if verbose > 1:
-#             print(":: Rescaling of the power spectrum to get f_PBH =", self.forcedfPBH)
-
-#         sol = opt.bisect(_rootfunction_logfPBH, -1., 1., rtol=1.e-5, maxiter=100)
-#         self.Pkscalingfactor = 10. ** sol
-
-#         if verbose > 1:
-#             print(":: After rescaling, I get a total abundance of PBHs: fPBH=", self.get_fPBH(mPBH))
-#             print(":: Rescaling factor=", self.Pkscalingfactor)
-#             print(":: zeta_crit (radiation) = ", self.get_deltacr())
-#             print("====")
-
-#         return self.Pkscalingfactor
-
-
-#     def get_nonrescaled_logfofmPBH(self, mPBH, mHeq = 2.8e17):   #TODO   mHeq is hardcoded
-#         # returns log_10 of the dark matter density fraction of PBH today f(m_PBH)
-#         cp = self.cp
-#         logbeta = self.get_logbeta(mPBH)
-#         logfofmPBH = logbeta + np.log10(
-#             (mHeq / (mPBH / self.ratio_mPBH_over_mH)) ** (1. / 2.) * 2. / (cp.Omc / (cp.Omc + cp.Omb)))
-#         return logfofmPBH
-
-#     def get_logfofmPBH(self, mPBH, mHeq = 2.8e17):   #TODO   mHeq is hardcoded
-#         # returns log_10 of the dark matter density fraction of PBH today f(m_PBH)
-#         if self.Pkrescaling == True and self.rescaling_is_done == False:
-#             self.calc_scaling(mPBH)
-#         logfofmPBH = self.get_nonrescaled_logfofmPBH(mPBH, mHeq)
-#         return logfofmPBH
-
-#     def get_fofmPBH(self, mPBH):
-#         return 10**self.get_logfofmPBH(mPBH)
-
-#     def get_fPBH(self, mPBH):
-
-#         def _integrator_foflogmPBH(logmPBH):
-#             # returns the dark matter density fraction of PBH today f(m_PBH)
-#             logfofmPBH = logfofmPBH_interp(logmPBH)
-#             foflogmPBH = 10. ** logfofmPBH
-#             return foflogmPBH
-
-#         logmPBHtable = np.log10(mPBH)
-#         logmass_min = np.min(logmPBHtable)
-#         logmass_max = np.max(logmPBHtable)
-#         logfofmPBHtable = self.get_nonrescaled_logfofmPBH(mPBH)
-
-#         # Integrate
-#         logfofmPBH_interp = interp1d(logmPBHtable, logfofmPBHtable)
-#         fPBHsol = integrate.quad(_integrator_foflogmPBH, logmass_min, logmass_max, epsrel=0.001)
-#         fPBH = fPBHsol[0]
-
-#         return fPBH
-
-#     def get_logfPBH(self, mPBH_table):
-#         logfPBH = np.log10(self.get_fPBH(mPBH_table))
-#         return logfPBH
-
-#     def get_Pk(self, k):
-#         return ClassPkSpectrum(pkmodel=self.Pk_model, cm=self.cp).Pk(k)
 
 
 

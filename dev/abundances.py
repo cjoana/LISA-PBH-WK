@@ -12,9 +12,11 @@ import matplotlib as mpl
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-18]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
+FILEPATH = os.path.realpath(__file__)[:-21]
+sys.path.append(FILEPATH + "/source")
+sys.path.append("../source")
+sys.path.append(FILEPATH + "/params")
+sys.path.append("../params")
 print(f"FILEPATH = {FILEPATH}")
 
 
@@ -285,7 +287,7 @@ if __name__ == "__main__":
     ## Model A: Gaussian
     sig =  0.25
     As = 0.01*sig
-    kp = 1e7
+    kp = 1e6
     PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
     
     ## Model B : axion_gauge
@@ -311,6 +313,7 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(4,1, figsize=(8,8))
 
+    fig.suptitle("Example of Guassian powerspectra")
     kk =  k_of_m(mass)
     ax = axs[0]
     ax.plot(kk, PS_func(kk))
@@ -333,7 +336,7 @@ if __name__ == "__main__":
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylabel(r"$\beta$")
-    ax.set_xlabel(r"$m_{PBH}\ [?]$")
+    ax.set_xlabel(r"$m_{PBH}\ [M_{\rm sun}]$")
     ax.set_xlim(max(mass), min(mass))
     ax.set_ylim(beta.max()*1e-8, beta.max()*10)
 
@@ -343,9 +346,10 @@ if __name__ == "__main__":
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_ylabel(r"$f_{pbh}$")
-    ax.set_xlabel(r"$m_{PBH}\ [?]$")
+    ax.set_xlabel(r"$m_{PBH}\ [M_{\rm sun}]$")
     ax.set_xlim(max(mass), min(mass))
 
     plt.tight_layout()
+    plt.savefig("../plots/example_abundances.png")
     plt.show()
 

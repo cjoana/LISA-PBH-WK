@@ -13,9 +13,11 @@ from scipy.integrate import dblquad
 import scipy.optimize as opt
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-20]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
+FILEPATH = os.path.realpath(__file__)[:-21]
+sys.path.append(FILEPATH + "/source")
+sys.path.append("../source")
+sys.path.append(FILEPATH + "/params")
+sys.path.append("../params")
 print(f"FILEPATH = {FILEPATH}")
 
 

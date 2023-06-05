@@ -10,10 +10,12 @@ import scipy.optimize as opt
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-21]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
-# print(f"FILEPATH = {FILEPATH}")
+FILEPATH = os.path.realpath(__file__)[:-25]
+sys.path.append(FILEPATH + "/source")
+sys.path.append("../source")
+sys.path.append(FILEPATH + "/params")
+sys.path.append("../params")
+print(f"FILEPATH = {FILEPATH}")
 
 from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
 
@@ -322,14 +324,11 @@ class PowerSpectrum:
 if __name__ == "__main__":
     # Munch allows to set-up/extract values as  both dictionary and class ways
 
+
+
+    # Example one model
+ 
     myPS = PowerSpectrum.gaussian()
-    # myPS = PowerSpectrum.powerlaw()
-    # myPS = PowerSpectrum.broken_powerlaw()
-    # myPS = PowerSpectrum.axion_gauge()
-    # myPS = PowerSpectrum.preheating()
-    # myPS = PowerSpectrum.vacuum()
-
-
 
     # myPS.As = 0.3
     myPS.print_att()
@@ -345,4 +344,66 @@ if __name__ == "__main__":
     plt.yscale("log")
     plt.xscale("log")
     plt.ylim(1e-19, 1)
+    plt.savefig("../plots/example_powerspectra_gaussian.png")
+    # plt.show()
+
+    xmin = 10**2
+    xmax = 10**13
+    ymin = 1e-12
+    ymax = 1.05
+    k_values = 10**np.linspace(np.log10(xmin), np.log10(xmax), 200)
+    
+
+
+    # Example with several models
+    
+    models = [ 
+        'powerlaw',
+        'broken_powerlaw',
+        'lognormal',
+        'gaussian',
+        'multifield',
+        'axion_gauge',
+        # 'preheating',
+        'vacuum'
+    ]
+
+    model_name = [
+        'power-law',
+        'broken power-law',
+        'lognormal',
+        'gaussian',
+        'multifield',
+        'axion gauge',
+        # 'preheating',   #   (2.20)
+        'vacuum'
+    ]
+
+    color_pal = ['k', 'b', 'g', 'r',  'orange', 'darkgreen', 'purple', 'k']
+    lstyle = ['-', '-', '-', '-',      '--', '--', '--', '--']
+
+    figPk = plt.figure()
+    figPk.patch.set_facecolor('white')
+    ax = figPk.add_subplot(111)
+    
+    for i, model in enumerate(models):
+        PM = PowerSpectrum.get_model(model)
+        xs = k_values
+        ys = PM.PS(kk=k_values)     
+        lbl = "{}".format(model_name[i])
+        ax.plot(xs, ys, label=lbl, color=color_pal[i], ls=lstyle[i])
+    
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    plt.ylim(ymin,ymax)
+    plt.xlim(xmin,xmax)
+    plt.xlabel('Wavenumber $k$  [Mpc$^{-1}$]', fontsize=14)
+    plt.ylabel(r'$\mathcal{P}_{\zeta} (k)$', fontsize=15)
+    
+    plt.legend(loc=4)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig("../plots/example_powerspectra_models.png")
     plt.show()
+
+    

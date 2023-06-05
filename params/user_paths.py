@@ -1,0 +1,5 @@
+# prjdir = "/home/cjoana/dev/LISA-PBH-WG"
+prjdir = "/Users/cjoana/dev/LISA-PBH-WG"
+datadir = prjdir + "/data"
+figdir = prjdir + "/figures"
+zetacr_file = "zetacr.dat"
