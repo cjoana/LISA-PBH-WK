@@ -263,6 +263,24 @@ class PS_UserImport(PS_Base):
     def PS(self, kk):
         PS = self.interp_func(kk)
         return PS
+    
+
+class PS_ReadFromFile(PS_Base):
+
+    def __init__(self, path): 
+        
+        data = np.loadtxt(path, comments="#", usecols=(0, 1))
+        user_k = data[:,0]
+        user_PS = data[:,1]
+
+        self._user_k = user_k 
+        self._user_PS = user_PS
+        self.interp_func = interp1d(user_k, user_PS) 
+        self.k_lims = [np.min(user_k), np.max(user_k)]
+            
+    def PS(self, kk):
+        PS = self.interp_func(kk)
+        return PS
 
 
 class PS_UserFunction(PS_Base):
@@ -290,6 +308,7 @@ class PowerSpectrum:
     user_import = PS_UserImport
     user_function = PS_UserFunction
     vacuum = PS_Vacuum
+    read_from_file = PS_ReadFromFile
 
     def get_defaultPS():
         
@@ -310,6 +329,9 @@ class PowerSpectrum:
         if model=="preheating": return PowerSpectrum.preheating(kargs)
         if model=="multifield": return PowerSpectrum.multifield(kargs)
         if model=="vacuum": return PowerSpectrum.vacuum(kargs)
+        if model=="from_file": return  PowerSpectrum.read_from_file(kargs) 
+        if model=="user_import": return  PowerSpectrum.user_import(kargs)
+        if model=="user_function": return  PowerSpectrum.user_function(kargs) 
 
 
    
@@ -337,10 +359,20 @@ if __name__ == "__main__":
     ks = 10**np.linspace(1.0, 8.0, 100, True)   
     print( np.min(myPS.PS(ks)), np.max(myPS.PS(ks))  )
 
+    data = np.zeros((len(ks), 2))
+    data[:,0] = ks
+    data[:,1] = myPS.PS(ks)
+
+    fn_psdef = "../data/default_powerspectra.txt"
+    np.savetxt(fn_psdef, data, header=" Default powerspectra (Gaussian) saved in example file 'power_spectrum.py'.")
+
+    # Test of read_from_file option
+    myPS2 = PowerSpectrum.read_from_file(fn_psdef)
 
     import matplotlib.pyplot as plt
 
-    plt.plot(ks, myPS.PS(ks))
+    plt.plot(ks, myPS.PS(ks), "b-")
+    plt.plot(ks, myPS2.PS(ks), "r--")
     plt.yscale("log")
     plt.xscale("log")
     plt.ylim(1e-19, 1)
