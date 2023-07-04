@@ -39,8 +39,6 @@ sel_files = [
         # High Mass
         ["ICARUS.txt",          "ICARUS",        'm'   , 1 ],
         ["SNe.txt",              "SNe",     'orange' , 2 ],
-        ["GW.txt",              "GW (LVK)",            'brown'   , 2 ],
-        ["MACHO.txt",           "MACHO",     'purple' , 2 ],
         ["xray_ziparo22.txt",    "Xray ziparo22" ,     'orange' , 1 ],
         ["PlanckSpherical.txt",  "Planck Spherical",   'gray' , 2 ],
         ["PlanckDisk.txt",       "Planck Disk",     'black' , 1 ],
@@ -48,7 +46,7 @@ sel_files = [
         ["CMB_Kamio_coll.txt",     "CMB K1",        "r"   , 3 ],
         ["CMB_Kamio_photo.txt",    "CMB K2",        "b"     , 3 ],
         ["CMB_Serpico_P.txt",      "CMB S",        "k"     , 3 ],
-        ["SegueI.txt",           "segueiI" ,  "green",  2 ],
+        ["SegueI.txt",           "Segue I" ,  "green",  2 ],
         ["EridanusII.txt",      "Eridanus II",   'm'   , 2 ],
         ["XRayB.txt",            "Xray Binaries",     "red" , 3 ],
         ["LalphaForest.txt",            r"L $\alpha$",  "c"  , 2 ],
@@ -62,6 +60,8 @@ sel_files = [
         #
         #
         #
+#        ["GW.txt",              "GW (LVK)",            'brown'   , 2 ],
+#        ["MACHO.txt",           "MACHO",     'purple' , 2 ],
         #
         ## ["LEoT2.txt",           "LE oT2",       'k',    None ],
         ## ["Xray.txt",             "Xray2" ,     "green" , 2 ],

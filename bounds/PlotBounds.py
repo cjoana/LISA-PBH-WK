@@ -97,8 +97,8 @@ for axs in [ax, ax2]:
 
 
 
-fig.savefig(outfile, bbox_inches='tight', dpi=600)
-fig2.savefig(outfile2, bbox_inches='tight', dpi=600)
+fig.savefig(outfile, bbox_inches='tight', dpi=1200)
+fig2.savefig(outfile2, bbox_inches='tight', dpi=1200)
     
 # fig.show()
 
