@@ -39,28 +39,28 @@ sel_files = [
         # High Mass
         ["ICARUS.txt",          "ICARUS",        'm'   , 1 ],
         ["SNe.txt",              "SNe",     'orange' , 2 ],
-        ["xray_ziparo22.txt",    "Xray ziparo22" ,     'orange' , 1 ],
-        ["PlanckSpherical.txt",  "Planck Spherical",   'gray' , 2 ],
-        ["PlanckDisk.txt",       "Planck Disk",     'black' , 1 ],
-        ["CMB.txt",                "CMB",       "purple"  , 3 ],
-        ["CMB_Kamio_coll.txt",     "CMB K1",        "r"   , 3 ],
-        ["CMB_Kamio_photo.txt",    "CMB K2",        "b"     , 3 ],
-        ["CMB_Serpico_P.txt",      "CMB S",        "k"     , 3 ],
+        ["xray_ziparo22.txt",    "XRay bkg" ,     'orange' , 1 ],       #  arxiv: 2209.09907
+        ["PlanckSpherical.txt",  "CMB SPIK2",   'gray' , 2 ],			 # 	arxiv: 2002.10771 (2 sph)
+        ["PlanckDisk.txt",       "CMB SPIK1",     'black' , 1 ],		 # 	arxiv: 2002.10771 (1 disk)
+        ["GW.txt",               "GW (LVK)",            'brown'   , 2 ],
+        ["CMB_Kamio_coll.txt",   "CMB AK1",        "r"   , 3 ],  		 #  arxiv: 1612.05644 (1)
+        ["CMB_Kamio_photo.txt",  "CMB AK2",        "b"     , 3 ],      #  arxiv: 1612.05644 (2)
+        ["CMB_Serpico_P.txt",    "CMB PSCCK",        "k"     , 3 ],    #	arxiv: 1707.04206
+        ["cmb_FLC.txt", 		 "CMB FLC22", 'darkblue',  2],		# arxiv: 2212.07969
         ["SegueI.txt",           "Segue I" ,  "green",  2 ],
-        ["EridanusII.txt",      "Eridanus II",   'm'   , 2 ],
-        ["XRayB.txt",            "Xray Binaries",     "red" , 3 ],
-        ["LalphaForest.txt",            r"L $\alpha$",  "c"  , 2 ],
-        ["DynamicalFriction.txt", "Dyn. friction",  'darkgreen' , 1 ],
-        ["FirstClouds.txt",     "First Clouds",  'm'   , 2 ],
-        ["LEoT1.txt",           "LE oT1",       'r',    2 ],
+        ["EridanusII.txt",       "Eridanus II",   'm'   , 2 ],
+        ["XRayB.txt",            "XRay binaries",     "orange" , 3 ],
+        ["LalphaForest.txt",     r"Ly$\alpha$",  "c"  , 2 ],
+        ["DynamicalFriction.txt","Dyn. friction",  'darkgreen' , 1 ],
+        ["FirstClouds.txt",      "First Clouds",  'yellow'   , 2 ],
         ["UFD.txt",              "UFD" ,        'g',     3 ],
         ["WideBinaries.txt",     "Wide Binaries",   'm' , 3 ],
-        ["cmb_dist.txt",           "CMB dist",  "blue"     , 1 ],
-        ["DG.txt",                "DG",         'brown' , 1 ],
+        ["cmb_dist.txt",         "CMB dist.",  "blue"     , 1 ],
+        ["DG.txt",               "Gal. Disk",         'brown' , 1 ],
         #
         #
         #
-#        ["GW.txt",              "GW (LVK)",            'brown'   , 2 ],
+
 #        ["MACHO.txt",           "MACHO",     'purple' , 2 ],
         #
         ## ["LEoT2.txt",           "LE oT2",       'k',    None ],
@@ -105,6 +105,9 @@ sel_files = [
         ## ["gstar(T).txt",  , None ],          ## 4 columns  with weird first values (1e-6 -- 1e16)
         ## ["mudistorsion.txt",  , None ],      #INVISIBLE
         ## ["np.txt",  , None ],     ## ??
+        # ["CMB.txt",                "CMB",       "purple"  , 3 ],
         ## ["text.txt",  , None ],   ## ??
+        # ["LEoT1.txt",            "LE oT1",       'r',    2 ],
+        
 #
 ]

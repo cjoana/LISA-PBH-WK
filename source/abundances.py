@@ -71,10 +71,10 @@ class CLASSabundances:
             betas = []
             for i_s, sig in enumerate(sigma): 
 
-                do_integration = False    #TODO : specify! (I checked, gives aprox the same)
+                do_integration = True    #TODO : specify! (I checked, gives aprox the same)
                 if do_integration: 
                     def _integrator_PDF(delta):
-                        # returns the dark matter density fraction of PBH today f(m_PBH)
+                        # Gaussian PDF of sigma, region under tail after delta.  
                         return  1/np.sqrt(2*np.pi*sig**2) * np.exp(-0.5*(delta/sig)**2)
 
                     # Integrate
