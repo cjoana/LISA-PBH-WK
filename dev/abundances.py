@@ -57,7 +57,7 @@ class CLASSabundances:
     def get_beta(self, mPBH, method="integration"):
 
         if method == "semianalytical":
-            return self.get_beta_anal_approx(mPBH)        #Testing 
+            return self.get_beta_analytic_approx(mPBH)        #Testing 
 
         if method == "integration":
             dcrit = self.get_dcrit(mPBH=mPBH)
@@ -99,7 +99,7 @@ class CLASSabundances:
             raise Exception(m)
 
 
-    def get_beta_anal_approx(self, mPBH):
+    def get_beta_analytic_approx(self, mPBH):
 
         #params to set
         ratio_mPBH_over_mH = 0.8

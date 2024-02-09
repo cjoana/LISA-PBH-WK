@@ -7,9 +7,12 @@ from scipy.integrate import dblquad
 
 import sys, os
 FILEPATH = os.path.realpath(__file__)[:-24]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
+sys.path.append(FILEPATH + "/source")
+sys.path.append("../source")
+sys.path.append(FILEPATH + "/params")
+sys.path.append("../params")
 print(f"FILEPATH = {FILEPATH}")
+
 
 
 from user_params import cosmo_params, physics_units
@@ -195,5 +198,7 @@ if __name__ == "__main__":
     # ax.axhline(1, color="k", ls="--", alpha=0.5)
 
     plt.tight_layout()
+    plt.savefig("../plots/example_2ndOrderSGWB.png", dpi=300)
+
     plt.show()
 
