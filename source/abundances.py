@@ -12,12 +12,13 @@ import matplotlib as mpl
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-21]
-sys.path.append(FILEPATH + "/source")
-sys.path.append("../source")
-sys.path.append(FILEPATH + "/params")
-sys.path.append("../params")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
 
 
 from user_params import cosmo_params, physics_units, PBHForm
@@ -57,7 +58,7 @@ class CLASSabundances:
     def get_beta(self, mPBH, method="integration"):
 
         if method == "semianalytical":
-            return self.get_beta_analitic_approx(mPBH)        #Testing 
+            return self.get_beta_analytic_approx(mPBH)        #Testing 
 
         if method == "integration":
             dcrit = self.get_dcrit(mPBH=mPBH)
@@ -71,10 +72,10 @@ class CLASSabundances:
             betas = []
             for i_s, sig in enumerate(sigma): 
 
-                do_integration = True    #TODO : specify! (I checked, gives aprox the same)
+                do_integration = False    #TODO : specify! (I checked, gives aprox the same)
                 if do_integration: 
                     def _integrator_PDF(delta):
-                        # Gaussian PDF of sigma, region under tail after delta.  
+                        # returns the dark matter density fraction of PBH today f(m_PBH)
                         return  1/np.sqrt(2*np.pi*sig**2) * np.exp(-0.5*(delta/sig)**2)
 
                     # Integrate
@@ -99,7 +100,7 @@ class CLASSabundances:
             raise Exception(m)
 
 
-    def get_beta_anal_approx(self, mPBH):
+    def get_beta_analytic_approx(self, mPBH):
 
         #params to set
         ratio_mPBH_over_mH = 0.8
@@ -350,6 +351,6 @@ if __name__ == "__main__":
     ax.set_xlim(max(mass), min(mass))
 
     plt.tight_layout()
-    plt.savefig("../plots/example_abundances.png")
+    plt.savefig(PLOTSPATH + "/example_abundances.png")
     plt.show()
 

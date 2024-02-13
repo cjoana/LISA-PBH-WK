@@ -13,12 +13,13 @@ from scipy.integrate import dblquad
 import scipy.optimize as opt
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-21]
-sys.path.append(FILEPATH + "/source")
-sys.path.append("../source")
-sys.path.append(FILEPATH + "/params")
-sys.path.append("../params")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
 
 
 # import abundances
@@ -151,5 +152,5 @@ if __name__ == "__main__":
     plt.xlabel(r'$\log \, m_1 /M_\odot $')
     plt.ylabel(r'$\log \, m_2 /M_\odot $')
     plt.grid(True)
-    figRprim.savefig("../plots/example_RatesPrim.png", facecolor=figRprim.get_facecolor(), edgecolor='none',dpi=300)
+    figRprim.savefig(PLOTSPATH + "/example_RatesPrim.png", facecolor=figRprim.get_facecolor(), edgecolor='none',dpi=300)
     plt.show()

@@ -12,12 +12,13 @@ import matplotlib as mpl
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-21]
-sys.path.append(FILEPATH + "/source")
-sys.path.append("../source")
-sys.path.append(FILEPATH + "/params")
-sys.path.append("../params")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
 
 
 from user_params import cosmo_params, physics_units, PBHForm
@@ -350,6 +351,6 @@ if __name__ == "__main__":
     ax.set_xlim(max(mass), min(mass))
 
     plt.tight_layout()
-    plt.savefig("../plots/example_abundances.png")
+    plt.savefig(PLOTSPATH + "/example_abundances.png")
     plt.show()
 

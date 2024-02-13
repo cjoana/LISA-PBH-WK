@@ -10,12 +10,13 @@ import scipy.optimize as opt
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-25]
-sys.path.append(FILEPATH + "/source")
-sys.path.append("../source")
-sys.path.append(FILEPATH + "/params")
-sys.path.append("../params")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
 
 from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
 
@@ -344,7 +345,7 @@ if __name__ == "__main__":
     plt.yscale("log")
     plt.xscale("log")
     plt.ylim(1e-19, 1)
-    plt.savefig("../plots/example_powerspectra_gaussian.png")
+    plt.savefig(PLOTSPATH + "/example_powerspectra_gaussian.png")
     # plt.show()
 
     xmin = 10**2
@@ -403,7 +404,7 @@ if __name__ == "__main__":
     plt.legend(loc=4)
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig("../plots/example_powerspectra_models.png")
+    plt.savefig(PLOTSPATH + "/example_powerspectra_models.png")
     plt.show()
 
     

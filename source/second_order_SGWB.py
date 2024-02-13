@@ -6,10 +6,14 @@ from scipy.integrate import dblquad
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-24]
-sys.path.append(FILEPATH + "/src")
-sys.path.append("./src")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
+
 
 
 from user_params import cosmo_params, physics_units
@@ -195,5 +199,7 @@ if __name__ == "__main__":
     # ax.axhline(1, color="k", ls="--", alpha=0.5)
 
     plt.tight_layout()
+    plt.savefig(PLOTSPATH + "/example_2ndOrderSGWB.png", dpi=300)
+
     plt.show()
 

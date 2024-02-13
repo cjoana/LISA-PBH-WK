@@ -10,12 +10,13 @@ import scipy.optimize as opt
 
 
 import sys, os
-FILEPATH = os.path.realpath(__file__)[:-20]
-sys.path.append(FILEPATH + "/source")
-sys.path.append("../source")
-sys.path.append(FILEPATH + "/params")
-sys.path.append("../params")
-print(f"FILEPATH = {FILEPATH}")
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
 
 from user_params import cosmo_params, physics_units, PBHForm
 
