@@ -21,7 +21,7 @@ sys.path.append(SOURCEPATH)
 sys.path.append(PARAMSPATH)
 
 
-from user_params import cosmo_params, physics_units, PBHForm
+from params.user_params import cosmo_params, physics_units, PBHForm
 
 from power_spectrum import PowerSpectrum
 from threshold import ClassThresholds
@@ -242,6 +242,14 @@ class CLASSabundances:
 
 if __name__ == "__main__":
 
+    # import sys, os
+    # ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+    # SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+    # PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+    # PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+    # sys.path.append(ROOTPATH)
+    # sys.path.append(SOURCEPATH)
+    # sys.path.append(PARAMSPATH)
 
     #Specify the plot style
     mpl.rcParams.update({'font.size': 10,'font.family':'serif'})

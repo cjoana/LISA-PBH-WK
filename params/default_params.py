@@ -1,7 +1,7 @@
 import numpy as np
 from munch import Munch
 from functions import *
-from user_paths import prjdir, datadir, zetacr_file, figdir
+from user_paths import *
 
 """
 This file contain the following dictionaries:

@@ -1,7 +1,7 @@
 import numpy as np
 from munch import Munch
 from default_params import *
-from user_paths import prjdir, datadir, zetacr_file, figdir
+from user_paths import *
 
 verbose = 1
 
