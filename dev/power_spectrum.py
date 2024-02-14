@@ -325,10 +325,7 @@ class PowerSpectrum:
 if __name__ == "__main__":
     # Munch allows to set-up/extract values as  both dictionary and class ways
 
-
-
     # Example one model
- 
     myPS = PowerSpectrum.gaussian()
 
     # myPS.As = 0.3
@@ -347,6 +344,7 @@ if __name__ == "__main__":
     plt.ylim(1e-19, 1)
     plt.savefig(PLOTSPATH + "/example_powerspectra_gaussian.png")
     # plt.show()
+    plt.close()
 
     xmin = 10**2
     xmax = 10**13

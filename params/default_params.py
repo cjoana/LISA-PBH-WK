@@ -19,7 +19,7 @@ It contains params of PBH formation models
     *   Musco20 model
 
 It contains params of Merging rates models
-    *   PBH binareis
+    *   PBH binaries
     *   Clusters
 """
 
@@ -53,7 +53,7 @@ cosmo_params['Omc'] = 0.245
 cosmo_params['h'] = 0.7
 cosmo_params['Nur'] = 3.046
 cosmo_params['TCMB'] = 2.726
-cosmo_params['kstar'] = 0.05  # TODO: check this number (is kp?)
+cosmo_params['kstar'] = 0.05 
 cosmo_params['kp'] = 2.e6
 # derived cosmological parameters
 cosmo_params['H0'] = cosmo_params.h * 100000. / physics_units.mpc  # (* Hubble rate today, [s^-1] *)

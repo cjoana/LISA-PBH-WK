@@ -6,7 +6,7 @@ from user_paths import *
 verbose = 1
 
 # Pk Model
-Pk_models.Pk_model = 'default'  # e.g.:  'powerlaw' (default), 'broken_powerlaw', 'gaussian', 'lognormal'
+Pk_models.Pk_model = 'powerlaw'  # e.g.:  'powerlaw' (default), 'broken_powerlaw', 'gaussian', 'lognormal'
 
 
 # PBH formation params
