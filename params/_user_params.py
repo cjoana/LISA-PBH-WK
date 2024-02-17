@@ -54,8 +54,10 @@ if __name__ == "__main__":
     print("I have chosen to compute thresholds with  : ", PBHFormation_params.model)
 
     # This should break the code as variables don't exist (typos)  # Test
+    print("Performing error test, trying to set an un-existing parameters...")
     try: 
-        MerginRates_params.clusters.rclust = 400.
+        # test for typo, `Rclust` exist, `rclust` does not.
+        MerginRates_params.clusters.rclust = 400.    
     except AttributeError as E:
         print("Test was succesfull!, error message would have been : ")
         print(f"   >>> AttributeError : {E}")
