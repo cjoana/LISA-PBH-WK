@@ -128,9 +128,9 @@ class p_PowerSpectrumBrokenPowerlaw:
 class p_PowerSpectrumMultifield:
     def __init__(self):
         self.name = "multifield"
-        self.kf = 2e6          # scale H-crossing at sharp turn  [mpc^-1]
-        self.P0 = 2e-9        # Amplitude Pk in absence of transient instability
-        self.eta = 4.           # TODO: check value
+        self.kf = 2e6             # scale H-crossing at sharp turn  [mpc^-1]
+        self.P0 = 2e-9            # Amplitude Pk in absence of transient instability
+        self.eta = 4.             # TODO: check value
         self.delta = 2.2          # TODO: check value
         self.kp = self.kf
 
