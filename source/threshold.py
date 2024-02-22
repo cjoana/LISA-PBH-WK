@@ -1,4 +1,3 @@
-
 import numpy as np
 import scipy.constants as const
 import scipy.special as special
@@ -18,7 +17,12 @@ sys.path.append(ROOTPATH)
 sys.path.append(SOURCEPATH)
 sys.path.append(PARAMSPATH)
 
-from user_params import cosmo_params, physics_units, PBHForm
+# from user_params import cosmo_params, physics_units, PBHForm
+from params.user_params import physics_units, cosmo_params, PSModels_params
+from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import verbose 
+
+PBHForm = PBHFormation_params
 
 
 verbose = 0
@@ -95,17 +99,17 @@ class ClassDeltaCritical:
 class ClassPBHFormationMusco20(ClassDeltaCritical):
 
     def __init__(self, 
-                       PS_func, 
+                       ps_function, 
                        eta=PBHForm.models.Musco20.eta,                      
                        k_star=PBHForm.models.Musco20.k_star,                      
-                       Pk_scalefactor=PBHForm.Pkscalingfactor,
+                       ps_scalefactor=PBHForm.Pkscalingfactor,
                        force_method=False,
                        pm=False, cp=False, thermalhistory_func=False ):
         super().__init__()
         self.eta = eta
-        self.PS_func= PS_func
+        self.ps_function= ps_function
         self.k_star = k_star
-        self.Pkscalingfactor = Pk_scalefactor
+        self.ps_scalingfactor = ps_scalefactor
         self.force_method = force_method
         if pm: self.pm = pm
         if cp: self.cp = cp
@@ -120,9 +124,9 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
         return 3 * (np.sin(arg) - arg * np.cos(arg)) / arg ** 3
 
     def PowerSpectrum(self, k, t):
-        Pk = self.PS_func 
+        Pk = self.ps_function 
 
-        P = Pk(k * self.k_star) * self.Pkscalingfactor
+        P = Pk(k * self.k_star) * self.ps_scalingfactor
         T =  self.TransferFunction(k, t)
         return 2.*np.pi**2 /(k**3) * P * T**2
 
@@ -222,7 +226,7 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
             if self.force_method:  
                 raise Exception(err_msg)
 
-            return  ClassPBHFormationStandard(self.PS_func).get_deltacr()
+            return  ClassPBHFormationStandard(self.ps_function).get_deltacr()
         
     def get_deltacr(self):
         # print("getting delta_cr with eta =  ", self.eta,  " kp =", self.kp) #TODO :clean
@@ -282,10 +286,10 @@ if __name__ == "__main__":
     # As = 0.01*sig
     # kp = 1e7  # TODO: with 1e6 or 1e8 it crashes!!
     # PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
-    # PS_func =  PS_model.PS_plus_vaccumm         # This is the default to calculate sigma and fPBH
+    # PS_func =  PS_model.PS_plus_vacuum         # This is the default to calculate sigma and fPBH
         
     PS_model = PowerSpectrum.axion_gauge()    
-    PS_func =  PS_model.PS_plus_vaccumm
+    PS_func =  PS_model.PS_plus_vacuum
 
 
     ### Print threshold 
@@ -300,7 +304,7 @@ if __name__ == "__main__":
 
     print("\n")
     print("Example using Musco formalism: ")
-    deltacrit = ClassPBHFormationMusco20(PS_func=PS_func)
+    deltacrit = ClassPBHFormationMusco20(ps_function=PS_func)
 
     dc = deltacrit.get_deltacr()
     dc_thermal = deltacrit.get_deltacr_with_thermalhistory(mPBH)

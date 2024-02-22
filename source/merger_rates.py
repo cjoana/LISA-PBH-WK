@@ -1,6 +1,9 @@
 """
 Code to evaluate merger rates given a mass distribution f(m1, m2, z), with PBH masses m1, m2 at a redshift z. 
-Basic models are included and others can be expanded easily. 
+Basic models are included and others can be easily expanded. 
+
+
+Need testing!!! 
 """
 
 import numpy as np
@@ -24,17 +27,21 @@ sys.path.append(PARAMSPATH)
 
 # import abundances
 from abundances import CLASSabundances
-from user_params import cosmo_params, physics_units
+
+# from user_params import cosmo_params, physics_units
+from params.user_params import physics_units, cosmo_params, PSModels_params
+from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import verbose 
 
 
-class MergerRates(CLASSabundances): 
-
-    def __init__(self, **kargs): 
-        super().__init__(**kargs)
-
+class MergerRates():    
+    def __init__(self, masses=None, fpbhs=None):   
         self.Rclust = 400               # TODO : hardcode
         self.fsup = 0.0025              # TODO : hardcode
         self.ratio_mPBH_over_mH = 0.8   # TODO : hardcode
+
+        self.masses = masses
+        self.fpbhs = fpbhs
 
         self.Omc = cosmo_params.Omc
         self.Omb = cosmo_params.Omb
@@ -45,43 +52,60 @@ class MergerRates(CLASSabundances):
         self.sol_rates_cluster = None        
 
 
-
-    def rates_primordial_binary(self, m1, m2):
-
-        rates = norm * self.fsup * self.get_fPBH(m1) * self.get_fPBH(m2)  * \
+    def rates_primordial_binary(self, m1, m2, fpbh1, fpbh2):
+        norm = 1.6e6 # self.Rprim #TODO ?
+        rates = norm * self.fsup * fpbh1 * fpbh2   * \
                     (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
         return rates
 
         #### 
-    def get_rates_primordial(self, masses):
+    def get_rates_primordial(self, masses=None, fpbhs=None):
+        if isinstance(masses, bool):
+            masses = self.masses
+            if not masses: raise ValueError("Values for the masses are not set. (get_rates_primordial)")
+        if isinstance(fpbhs, bool):
+            fpbhs = self.fpbhs
+            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_primordial)")
+
         # Computes the merging rates of primordial binaries
-        norm = 1.6e6
+        # norm = 1.6e6
         Nmass = len(masses)
-        rates = np.zeros([Nmass, Nmass])
+        rates = np.zeros([Nmass, Nmass]) * np.nan
         for ii in range(Nmass):
             m1 = masses[ii]
+            fpbh1 = fpbhs[ii]
             for jj in range(ii):
                 m2 = masses[jj]
-                rates[ii,jj] = self.rates_primordial_binary(m1, m2)
+                fpbh2 = fpbhs[jj]
+                rates[ii,jj] = self.rates_primordial_binary(m1, m2, fpbh1, fpbh2)
         self.sol_rates_primordial = rates
         return rates
 
 
-    def rates_cluster_binary(self, m1, m2):
+    def rates_cluster_binary(self, m1, m2, fpbh1, fpbh2):
         norm = self.Rclust
-        rates = norm * self.fsup * self.get_fPBH(m1) * self.get_fPBH(m2)  * \
+        rates = norm * self.fsup * fpbh1 * fpbh2  * \
                     (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
         return rates
 
-    def get_rates_clusters(self, masses):
+    def get_rates_clusters(self, masses=None, fpbhs=None):
+        if isinstance(masses, bool):
+            masses = self.masses
+            if not masses: raise ValueError("Values for the masses are not set. (get_rates_clusters)")
+        if isinstance(fpbhs, bool):
+            fpbhs = self.fpbhs
+            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_clusters)")
+
         # Computes the merging rates for tidal capture in PBH clusters
         Nmass = len(masses) 
-        rates = np.zeros((Nmass, Nmass))
+        rates = np.zeros([Nmass, Nmass]) * np.nan
         for ii in range(Nmass):
             m1 = masses[ii]
+            fpbh1 = fpbhs[ii]
             for jj in range(ii):
                 m2 = masses[jj]
-                rates[ii,jj] = self.rates_cluster_binary(m1, m2)
+                fpbh2 = fpbhs[jj]
+                rates[ii,jj] = self.rates_cluster_binary(m1, m2, fpbh1, fpbh2)
         self.sol_rates_cluster = rates
         return rates
 
@@ -132,16 +156,18 @@ if __name__ == "__main__":
     plt.yscale("log")
     plt.show()
 
+    my_abundances = CLASSabundances(ps_function=PS_func)
+    fpbhs = my_abundances.get_fPBH(masses)
 
-    sol = MergerRates(PS_function=PS_func).get_rates_clusters(masses)
+    sol = MergerRates().get_rates_clusters(masses, fpbhs)
     
     
     figRprim = plt.figure()
     # figRprim.patch.set_facecolor('white')
     ax = figRprim.add_subplot(111)
     Z =  np.transpose(np.log10(sol))
-    floor = 1e-2
-    Z[Z<floor] = np.nan
+    floor = 0.0
+    Z[(Z<floor)] = floor
     cs=ax.contourf(np.log10(masses),np.log10(masses),Z, levels=10) 
     plt.title("Merging rates for primordial binaries")
     cbar = figRprim.colorbar(cs)

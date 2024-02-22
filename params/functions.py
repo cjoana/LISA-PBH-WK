@@ -4,8 +4,8 @@ from functools import wraps
 # Class decorators 
 ##################################
 
-# Decorator to freeze i.e. prevent adding new attributes after initiation
-def froze_it(cls):
+# Decorator to prevent adding new attributes after initiation
+def prevent_new_attrs(cls):
     cls.__frozen = False
 
     def frozensetattr(self, key, value):

@@ -21,10 +21,16 @@ sys.path.append(SOURCEPATH)
 sys.path.append(PARAMSPATH)
 
 
-from user_params import cosmo_params, physics_units, PBHForm
-
 from power_spectrum import PowerSpectrum
 from threshold import ClassThresholds
+
+# from params.user_params import cosmo_params, physics_units, PBHForm
+from params.user_params import physics_units, cosmo_params, PSModels_params
+from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import verbose 
+
+
+
 
 # from threshold import ClassPBHFormationMusco20
 
@@ -33,35 +39,35 @@ from threshold import ClassThresholds
 
 class CLASSabundances:
     def __init__(self, 
-                    powerspectrum=None, 
-                    PS_function = None,
-                    scaling=False,
-                    gaussian=True,
+                    ps_class=None, 
+                    ps_function = None,
+                    fpbh_rescaling=False,
+                    gaussian_stats=True,
                     threshold_method='standard',
-                    thermal_history = True):
+                    thermal_history = False):
         
-        self.PS_model = powerspectrum if powerspectrum else PowerSpectrum.gaussian() 
-        self.PS_func = PS_function if PS_function else self.PS_model.PS_plus_vaccumm          #TODO warning: perhaps is better set somewhere else. 
+        self.ps_model = ps_class if ps_class else PowerSpectrum.gaussian() 
+        self.ps_function = ps_function if ps_function else self.ps_model.PS_plus_vacuum     #TODO warning: perhaps is better set somewhere else. 
           
-        self.PS_rescaling = scaling
-        self.PS_scalingfactor = scaling if isinstance(scaling, float) else 1.0 
-        self.Gaussian = gaussian
-        self.rescaling_is_done = True if isinstance(scaling, float) else False
-        self.threshold_method=threshold_method
+        self.ps_rescaling = fpbh_rescaling
+        self.ps_scalingfactor = fpbh_rescaling if isinstance(fpbh_rescaling, float) else 1.0 
+        self.gaussian_statistics = gaussian_stats
+        self.rescaling_is_done = True if not fpbh_rescaling else False
+        self.threshold_method = threshold_method
         self.thermal_history = thermal_history
 
 
-    def myPk(self, k):
-        return self.PS_func(k)
+    def ps_of_k(self, k):
+        return self.ps_function(k)
 
     
     def get_beta(self, mPBH, method="integration"):
 
         if method == "semianalytical":
-            return self.get_beta_analytic_approx(mPBH)        #Testing 
+            return self._get_beta_analytic_approx(mPBH)        #Testing 
 
         if method == "integration":
-            dcrit = self.get_dcrit(mPBH=mPBH)
+            dcrit = self.get_deltacritical(mPBH=mPBH)
             sigma = self.get_variance(mPBH) **0.5       
 
             if isinstance(sigma, (float, int)) : 
@@ -100,17 +106,17 @@ class CLASSabundances:
             raise Exception(m)
 
 
-    def get_beta_analytic_approx(self, mPBH):
+    def _get_beta_analytic_approx(self, mPBH):
 
         #params to set
         ratio_mPBH_over_mH = 0.8
         kmsun = 2.1e6
         limit_for_using_erfc =  20. 
 
-        dcrit = self.get_dcrit(mPBH=mPBH)
+        dcrit = self.get_deltacritical(mPBH=mPBH)
         mH = mPBH / ratio_mPBH_over_mH
         kk = kmsun / mH ** (0.5)  # S. Clesse: to be checked
-        Pofk = self.PS_func(kk)
+        Pofk = self.ps_function(kk)
         
         
         argerfc = dcrit / (2. * Pofk) ** (1. / 2.)
@@ -123,18 +129,18 @@ class CLASSabundances:
         return beta
 
 
-    def get_overdensity_powerspectrum(self, k, mPBH):
+    def _get_overdensity_powerspectrum(self, k, mPBH):
 
         # This assumes standard thermal history in a Radiation Domination
 
         k_PBH = self.get_kPBH(mPBH)
-        delta_PS = (16./81) * (k/k_PBH)**4 * self.myPk(k)
+        delta_PS = (16./81) * (k/k_PBH)**4 * self.ps_of_k(k)
 
         print("WARNING", k, delta_PS)
         return delta_PS
 
 
-    def get_window_function(self, k, r, method="default"):
+    def _get_window_function(self, k, r, method="default"):
 
         # NOTE:  The effect on the choice of the window function (plus transfer function) is enourmous
 
@@ -159,7 +165,7 @@ class CLASSabundances:
             raise Exception(m)
         
 
-    def get_scalesize(self, mPBH):
+    def _get_scalesize(self, mPBH):
 
         #TODO: put params  outside 
         ratio_mPBH_over_mH = 0.8
@@ -174,17 +180,16 @@ class CLASSabundances:
 
     def get_variance(self, mPBH):
 
-
         if isinstance(mPBH, (float, int)) : 
             mPBH = np.array([mPBH])
 
         vs = []
         for Mass in mPBH: 
 
-            RH = self.get_scalesize(Mass)
+            RH = self._get_scalesize(Mass)
 
             def _integrator_variance(k):
-                out =  self.get_window_function(k, RH)**2 * self.myPk(k) * (k*RH)**4   /k                 
+                out =  self._get_window_function(k, RH)**2 * self.ps_of_k(k) * (k*RH)**4   /k                 
                 return   out  
 
             kint = 1/RH
@@ -200,7 +205,7 @@ class CLASSabundances:
         return vs
     
 
-    def get_dcrit(self, mPBH = False):
+    def get_deltacritical(self, mPBH = False):
 
         # TODO: implement or call threshold class
         # self.threshold_method = "Musco20"
@@ -208,15 +213,15 @@ class CLASSabundances:
         Msun = physics_units.m_sun
 
         if self.threshold_method == "standard":
-            if self.thermal_history: return ClassThresholds.standard(PS_func=self.PS_func).get_deltacr_with_thermalhistory(mPBH)
-            else: return ClassThresholds.standard(PS_func=self.PS_func).get_deltacr()
+            if self.thermal_history: return ClassThresholds.standard(PS_func=self.ps_function).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.standard(PS_func=self.ps_function).get_deltacr()
 
         elif self.threshold_method == "Musco20":
-            if self.thermal_history: return ClassThresholds.Musco20(PS_func=self.PS_func).get_deltacr_with_thermalhistory(mPBH)
-            else: return ClassThresholds.Musco20(PS_func=self.PS_func).get_deltacr()
+            if self.thermal_history: return ClassThresholds.Musco20(ps_function=self.ps_function).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.Musco20(ps_function=self.ps_function).get_deltacr()
 
         else:
-            raise ("selected method for evaluating PBH threshold is not yet suported.")
+            raise ValueError("selected method for evaluating PBH threshold is not yet suported.")
             dcrit_default =  0.41   # In Pi-Wang 2022 they use dc = 0.41 / Similar to Harada or Escriva
             # dcrit_default =  1.02   # from Clesse default zetacr
             return dcrit_default
@@ -242,6 +247,14 @@ class CLASSabundances:
 
 if __name__ == "__main__":
 
+    # import sys, os
+    # ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+    # SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+    # PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+    # PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+    # sys.path.append(ROOTPATH)
+    # sys.path.append(SOURCEPATH)
+    # sys.path.append(PARAMSPATH)
 
     #Specify the plot style
     mpl.rcParams.update({'font.size': 10,'font.family':'serif'})
@@ -296,10 +309,10 @@ if __name__ == "__main__":
     # PS_model = PowerSpectrum.axion_gauge(As=As, sigma=sig, kp=kp)
     
     ## Select with vacuum
-    PS_func =  PS_model.PS_plus_vaccumm        # This is the default to calculate sigma and fPBH
+    PS_func =  PS_model.PS_plus_vacuum        # This is the default to calculate sigma and fPBH
     
     ## Select threshold calc method
-    a = CLASSabundances(PS_function = PS_func, threshold_method="standard")
+    a = CLASSabundances(ps_function = PS_func, threshold_method="standard")
     # a = CLASSabundances(PS_function = PS_func, threshold_method="Musco20")
 
     ## Params range: 

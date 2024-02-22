@@ -18,11 +18,14 @@ sys.path.append(ROOTPATH)
 sys.path.append(SOURCEPATH)
 sys.path.append(PARAMSPATH)
 
-from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
+# from user_params import cosmo_params, physics_units, PBHForm, Pk_models, verbose, MergingRates_models
+from params.user_params import physics_units, cosmo_params, PSModels_params
+from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import verbose 
 
+PS_models = PSModels_params
 
-PS_models = Pk_models
-
+# print(PS_models.model.gaussian)
 
 # Base Class model 
 
@@ -46,8 +49,12 @@ class PS_Base:
         print(">> Powerspectrum (PS) not specified, assuming PS vacuum.")
         return  self.PS_vac(kk)
 
-    def PS_plus_vaccumm(self, kk):
+    def PS_plus_vacuum(self, kk):
         return self.PS_vac(kk) + self.PS(kk)
+    
+    def ps_of_k(self, kk, with_vacuum=True):
+        if with_vacuum: return self.PS_vac(kk) + self.PS(kk)
+        else:  return self.PS_vac(kk)
    
     def get_children_strings(self):
         list_of_strings = []
@@ -293,11 +300,8 @@ class PowerSpectrum:
     vacuum = PS_Vacuum
 
     def get_defaultPS():
-        
-        if PS_models.default.Pk_model== "powerlaw":
-            return PS_Powerlaw
-        else: 
-            raise("Default powerspectrum not set up. ")
+        if verbose > 2 : print("The default powerspectrum is Powerlaw.")
+        return PS_Powerlaw
 
     default = get_defaultPS()
 
@@ -325,10 +329,7 @@ class PowerSpectrum:
 if __name__ == "__main__":
     # Munch allows to set-up/extract values as  both dictionary and class ways
 
-
-
     # Example one model
- 
     myPS = PowerSpectrum.gaussian()
 
     # myPS.As = 0.3
@@ -347,6 +348,7 @@ if __name__ == "__main__":
     plt.ylim(1e-19, 1)
     plt.savefig(PLOTSPATH + "/example_powerspectra_gaussian.png")
     # plt.show()
+    plt.close()
 
     xmin = 10**2
     xmax = 10**13
