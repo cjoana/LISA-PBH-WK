@@ -142,7 +142,7 @@ if __name__ == "__main__":
     # PS_func =  PS_model.PS
     
     def PS_func(kk):
-        AsPBH, kp, sigma = [0.0205, 2.e6, 1.]
+        AsPBH, kp, sigma = [0.00205, 2.e6, 1.]
         # AsPBH *= 1.183767
         return AsPBH * np.exp(- np.log(kk / kp) ** 2 / (2 * sigma ** 2))
     

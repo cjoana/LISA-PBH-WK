@@ -20,10 +20,10 @@ from user_params import cosmo_params, physics_units
 
 class SecondOrderSGWB():
 
-    def __init__(self, PS_func, PS_scalingfactor=1):        
+    def __init__(self, ps_function, ps_scalingfactor=1):        
         # power spectra params
-        self.PS_func = PS_func
-        self.PS_scalingfactor = PS_scalingfactor
+        self.ps_function = ps_function
+        self.ps_scalingfactor = ps_scalingfactor
 
         #physics constants 
         self.c =physics_units.c
@@ -56,8 +56,8 @@ class SecondOrderSGWB():
 
         value, error = dblquad(lambda x, y:
                                 x**2 / y**2 * (1 - (1 + x**2 - y**2)**2 / (4 * x**2))**2
-                                * self.PS_func(kvval * kcoef) * self.PS_scalingfactor  # PS(kvval*x)
-                                * self.PS_func(kvval * kcoef) * self.PS_scalingfactor  # PS(kvval*y)
+                                * self.ps_function(kvval * kcoef) * self.ps_scalingfactor  # PS(kvval*x)
+                                * self.ps_function(kvval * kcoef) * self.ps_scalingfactor  # PS(kvval*y)
                                 * self.IcsEnvXY(x, y)**2
                                 ,
                                 10**(- 4 * sigmaps) / kvval, 10**(4 * sigmaps) / kvval, lambda x: np.absolute(1 - x)
@@ -155,17 +155,17 @@ if __name__ == "__main__":
     sig =  0.25
     As = 0.01*sig
     kp = 1e7
-    PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
+    ps_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
     
     ## Model B : axion_gauge
-    # PS_model = PowerSpectrum.axion_gauge()    
-    # PS_model = PowerSpectrum.axion_gauge(As=As, sigma=sig, kp=kp)
+    # ps_model = PowerSpectrum.axion_gauge()    
+    # ps_model = PowerSpectrum.axion_gauge(As=As, sigma=sig, kp=kp)
     
     ## Select with vacuum
-    PS_func =  PS_model.PS_plus_vaccumm        # This is the default to calculate sigma and fPBH
+    ps_func =  ps_model.PS_plus_vacuum        # This is the default to calculate sigma and fPBH
     
     # Call the class 
-    SOGW = SecondOrderSGWB(PS_func=PS_func)
+    SOGW = SecondOrderSGWB(ps_function=ps_func)
 
     kvals = 10**np.linspace(-6,15, 1000)  
 
@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     ax = axs[0]
     x = kvals
-    y = PS_func(kvals)
+    y = ps_func(kvals)
     ###################
     ax.plot(x, y)
     ax.set_xscale("log")
