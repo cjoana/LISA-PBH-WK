@@ -102,7 +102,7 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
                        ps_function, 
                        eta=PBHForm.models.Musco20.eta,                      
                        k_star=PBHForm.models.Musco20.k_star,                      
-                       ps_scalefactor=PBHForm.Pkscalingfactor,
+                       ps_scalefactor=PBHForm.PS_scalingfactor,     # reserved re-scaling of PS to vary f_PBH, (default scale=1)
                        force_method=False,
                        pm=False, cp=False, thermalhistory_func=False ):
         super().__init__()
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     print(" >> delta crit without / with thermal history ", dc, dc_thermal)
 
 
-    # ###  Example by seting own thermal function: 
+    # ###  Example by setting own thermal function: 
 
     # def th_func(*args): return 1
     # thermalhistory_func = th_func    
