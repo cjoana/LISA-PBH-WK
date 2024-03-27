@@ -243,9 +243,9 @@ class p_PBHFormation:
         # generic params for PBH formation
         self.ratio_mPBH_over_mH = 0.8             # Ratio between PBH and Hubble masses at formation
         self.kmsun = 2.1e6
-        self.Pkrescaling = True                   # option to rescale the power spectrum to get a fixed DM fraction
+        self.PS_rescaling = True                   # option to rescale the power spectrum to get a fixed DM fraction
         self.forcedfPBH = 1.                      # Imposed DM fraction made of PBHs
-        self.Pkscalingfactor = 1.
+        self.PS_scalingfactor = 1.
         self.use_thermal_history = True           # option to include the effect of the equation-of-state changes due to the known thermal history
         self.data_directory = datadir
         self.zetacr_thermal_file = zetacr_file    # File of the evolution of zeta_cr with thermal history

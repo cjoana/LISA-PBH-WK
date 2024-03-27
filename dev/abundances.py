@@ -41,24 +41,58 @@ class CLASSabundances:
     def __init__(self, 
                     ps_class=None, 
                     ps_function = None,
-                    fpbh_rescaling=False,
                     gaussian_stats=True,
                     threshold_method='standard',
-                    thermal_history = False):
+                    thermal_history = False,
+                    fpbh_rescaling=False
+                    ):
         
         self.ps_model = ps_class if ps_class else PowerSpectrum.gaussian() 
-        self.ps_function = ps_function if ps_function else self.ps_model.PS_plus_vacuum     #TODO warning: perhaps is better set somewhere else. 
+        self.ps_function = ps_function if ps_function else self.ps_model.PS_plus_vacuum     #TODO warning: perhaps this is better set somewhere else. 
           
-        self.ps_rescaling = fpbh_rescaling
-        self.ps_scalingfactor = fpbh_rescaling if isinstance(fpbh_rescaling, float) else 1.0 
         self.gaussian_statistics = gaussian_stats
-        self.rescaling_is_done = True if not fpbh_rescaling else False
         self.threshold_method = threshold_method
         self.thermal_history = thermal_history
+        
+        # self.rescaling_is_done = True if not fpbh_rescaling else False
+        self.ps_scalingfactor = 1.
+        self.forced_fPBH = fpbh_rescaling
+        self.ps_rescaling = fpbh_rescaling
+
+        # fpbh_rescaling = 1.0 # Force rescaling to fpbh_integrated = 1
+        if fpbh_rescaling: 
+            self.ps_scalingfactor = self.compute_rescaling(fpbh_rescaling)
+
+
+    def compute_rescaling(self, fpbh_rescaling):
+            
+            self.forcedfPBH = fpbh_rescaling
+            print("Step 1b: Rescaling of the power spectrum to get f_PBH =", self.forcedfPBH)
+
+            def function_to_find_root(scaling):
+                # function to find the required scaling of the primoridal power spectrum to get a value of f_PBH determined by the user
+                
+                print("scaling : ", scaling)
+                self.ps_scalingfactor = 10 ** scaling
+                a = self.get_integrated_fPBH()
+                b = 1 # self.forced_fPBH
+                function =  np.log10(a) -  np.log10(b)
+            
+                print("a-b:", a, b )
+                return function
+            
+            sol = opt.bisect(function_to_find_root, -1, 1, rtol=1.e-5, maxiter=100)
+            self.ps_scalingfactor = 10 ** sol
+            print("After rescaling, I get a total abundance of PBHs: fPBH=", self.get_integrated_fPBH() )
+            print("Rescaling factor=", self.ps_scalingfactor)
+            print("====")
+            
+            return self.ps_scalingfactor 
+
 
 
     def ps_of_k(self, k):
-        return self.ps_function(k)
+        return self.ps_function(k) * self.ps_scalingfactor
 
     
     def get_beta(self, mPBH, method="integration"):
@@ -93,7 +127,7 @@ class CLASSabundances:
                     b_altern = np.exp(-0.5*(dc/sig)**2)/np.sqrt(2*np.pi*(dc/sig)**2)
                     beta = sol_U/sol_D if np.abs(sol_D) > 0 else  b_altern     #erfc(dcrit/np.sqrt(2*sig**2))
                 else:
-                    beta = np.exp(-0.5*(dcrit[i_s]/sig)**2)/np.sqrt(2*np.pi*(dcrit[i_s]/sig)**2)   #TODO:  SPi paper or Sebs:  Check if 2gamma is needed
+                    beta = np.exp(-0.5*(dcrit[i_s]/sig)**2)/np.sqrt(2*np.pi*(dcrit[i_s]/sig)**2)   
 
                 betas.append(beta)
 
@@ -116,7 +150,7 @@ class CLASSabundances:
         dcrit = self.get_deltacritical(mPBH=mPBH)
         mH = mPBH / ratio_mPBH_over_mH
         kk = kmsun / mH ** (0.5)  # S. Clesse: to be checked
-        Pofk = self.ps_function(kk)
+        Pofk = self.ps_of_k(kk)
         
         
         argerfc = dcrit / (2. * Pofk) ** (1. / 2.)
@@ -136,7 +170,6 @@ class CLASSabundances:
         k_PBH = self.get_kPBH(mPBH)
         delta_PS = (16./81) * (k/k_PBH)**4 * self.ps_of_k(k)
 
-        print("WARNING", k, delta_PS)
         return delta_PS
 
 
@@ -213,12 +246,12 @@ class CLASSabundances:
         Msun = physics_units.m_sun
 
         if self.threshold_method == "standard":
-            if self.thermal_history: return ClassThresholds.standard(PS_func=self.ps_function).get_deltacr_with_thermalhistory(mPBH)
-            else: return ClassThresholds.standard(PS_func=self.ps_function).get_deltacr()
+            if self.thermal_history: return ClassThresholds.standard(PS_func=self.ps_of_k).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.standard(PS_func=self.ps_of_k).get_deltacr()
 
         elif self.threshold_method == "Musco20":
-            if self.thermal_history: return ClassThresholds.Musco20(ps_function=self.ps_function).get_deltacr_with_thermalhistory(mPBH)
-            else: return ClassThresholds.Musco20(ps_function=self.ps_function).get_deltacr()
+            if self.thermal_history: return ClassThresholds.Musco20(ps_function=self.ps_of_k).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.Musco20(ps_function=self.ps_of_k).get_deltacr()
 
         else:
             raise ValueError("selected method for evaluating PBH threshold is not yet suported.")
@@ -241,20 +274,52 @@ class CLASSabundances:
 
         return fPBH
 
+    
+    def get_integrated_fPBH(self, m_min=False, m_max=False):
+        m_min = m_min if m_min else 1e-6  # TODO: hardcoded  
+        m_max = m_max if m_max else 1e8   # TODO: hardcoded       
+
+        #mass = 10**np.linspace(np.log10(m_min),np.log10(m_max), 500)
+        mass = 10**np.linspace(-6,8, 1000)
+        fpbh = self.get_fPBH(mass)  # + 1e-8
+
+        sol = None
+        # logmass = np.log10(mass)
+        # f_fpbh = interp1d(logmass, fpbh)
+        # n_lmass = np.linspace(np.log10(m_min),np.log10(m_max), 10000)
+        # diffs = np.diff(n_lmass)
+        # dm = diffs[0]
+        # ifpbh = f_fpbh(n_lmass)
+
+        # sol = np.sum(ifpbh*dm)/np.sum(dm)
+
+        # # sol2= integrate.quad(f_fpbh, -6, 8,  epsrel=0.0001)[0]
+
+
+        massmax = mass[np.argmax(fpbh)]
+        print('minmax', massmax)
+        m_min, m_max = (massmax/1000, massmax*1000)   # reduce integration window (warn)
+        f_fpbh = interp1d(mass, fpbh)
+
+        # n_lmass = np.linspace(m_min , m_max, 100000)
+        # diffs = np.diff(n_lmass)
+        # dm = diffs[0]
+        # ifpbh = f_fpbh(n_lmass)
+        # sol2 = np.sum(ifpbh*dm)
+
+        sol= integrate.quad(f_fpbh, m_min, m_max,  epsrel=0.01)[0]
+        # print(f'fpbh integrated =  {sol} , {sol2}, {dm}')
+        # sol = sol2
+
+        return sol
+
+
+
 
 
 #######################################
 
 if __name__ == "__main__":
-
-    # import sys, os
-    # ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
-    # SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
-    # PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
-    # PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
-    # sys.path.append(ROOTPATH)
-    # sys.path.append(SOURCEPATH)
-    # sys.path.append(PARAMSPATH)
 
     #Specify the plot style
     mpl.rcParams.update({'font.size': 10,'font.family':'serif'})

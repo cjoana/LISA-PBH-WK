@@ -22,9 +22,9 @@ PBHFormation_params.models.Musco20.eta = 0.1
 
 PBHFormation_params.ratio_mPBH_over_mH = 0.2            # Ratio between PBH and Hubble masses at formation
 PBHFormation_params.kmsun = 2.1e6                       # frequency related to one Solar Mass 
-PBHFormation_params.Pkrescaling = True                  # option to rescale the power spectrum to get a fixed DM fraction
+PBHFormation_params.PS_rescaling = False                  # option to rescale the power spectrum to get a fixed DM fraction
 PBHFormation_params.forcedfPBH = 1.                     # Imposed DM fraction made of PBHs
-PBHFormation_params.Pkscalingfactor = 1.
+PBHFormation_params.PS_scalingfactor = 1.
 
 # Usage of Thermal History
 PBHFormation_params.use_thermal_history = True         # option to include the effect of the equation-of-state changes
