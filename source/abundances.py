@@ -72,17 +72,20 @@ class CLASSabundances:
             def function_to_find_root(scaling):
                 # function to find the required scaling of the primoridal power spectrum to get a value of f_PBH determined by the user
                 
-                print("scaling : ", scaling)
+                print("scaling : ", 10 ** scaling)
                 self.ps_scalingfactor = 10 ** scaling
                 a = self.get_integrated_fPBH()
-                b = 1 # self.forced_fPBH
+                b = self.forced_fPBH
                 function =  np.log10(a) -  np.log10(b)
-            
-                print("a-b:", a, b )
                 return function
-            
-            sol = opt.bisect(function_to_find_root, -1, 1, rtol=1.e-5, maxiter=100)
-            self.ps_scalingfactor = 10 ** sol
+
+            try:
+                sol = opt.bisect(function_to_find_root, -5, 5, rtol=1.e-5, maxiter=100)
+                self.ps_scalingfactor = 10 ** sol
+            except ValueError as e:
+                self.ps_scalingfactor = 1.
+                print(" !!! Rescaling didn't converge, assuming PS has no peak, so fPBH = 0 ")
+
             print("After rescaling, I get a total abundance of PBHs: fPBH=", self.get_integrated_fPBH() )
             print("Rescaling factor=", self.ps_scalingfactor)
             print("====")
@@ -274,13 +277,15 @@ class CLASSabundances:
 
         return fPBH
 
-    
+    def get_spectrum_scaling(self):
+        return self.ps_scalingfactor
+
     def get_integrated_fPBH(self, m_min=False, m_max=False):
-        m_min = m_min if m_min else 1e-6  # TODO: hardcoded  
-        m_max = m_max if m_max else 1e8   # TODO: hardcoded       
+        m_min = m_min if m_min else 1e-10  # TODO: hardcoded  
+        m_max = m_max if m_max else 1e10   # TODO: hardcoded       
 
         #mass = 10**np.linspace(np.log10(m_min),np.log10(m_max), 500)
-        mass = 10**np.linspace(-6,8, 1000)
+        mass = 10**np.linspace(-10, 15 , 1000)
         fpbh = self.get_fPBH(mass)  # + 1e-8
 
         sol = None
@@ -290,22 +295,22 @@ class CLASSabundances:
         # diffs = np.diff(n_lmass)
         # dm = diffs[0]
         # ifpbh = f_fpbh(n_lmass)
-
-        # sol = np.sum(ifpbh*dm)/np.sum(dm)
+        # sol = np.sum(ifpbh*dm)
 
         # # sol2= integrate.quad(f_fpbh, -6, 8,  epsrel=0.0001)[0]
 
 
         massmax = mass[np.argmax(fpbh)]
-        print('minmax', massmax)
         m_min, m_max = (massmax/1000, massmax*1000)   # reduce integration window (warn)
+        m_min = m_min if m_min > 1e-6 else 1e-6  # TODO: hardcoded  
+        m_max = m_max if m_max < 1e8 else 1e8   # TODO: hardcoded 
         f_fpbh = interp1d(mass, fpbh)
 
         # n_lmass = np.linspace(m_min , m_max, 100000)
         # diffs = np.diff(n_lmass)
         # dm = diffs[0]
         # ifpbh = f_fpbh(n_lmass)
-        # sol2 = np.sum(ifpbh*dm)
+        # sol = np.sum(ifpbh*dm)
 
         sol= integrate.quad(f_fpbh, m_min, m_max,  epsrel=0.01)[0]
         # print(f'fpbh integrated =  {sol} , {sol2}, {dm}')
@@ -388,6 +393,7 @@ if __name__ == "__main__":
     beta = a.get_beta(mass)  #+ floor
     fpbh = a.get_fPBH(mass)  + floor
     sigma = a.get_variance(mass)
+    fpbh_integrated =  a.get_integrated_fPBH()
 
 
     fig, axs = plt.subplots(4,1, figsize=(8,8))
@@ -420,7 +426,8 @@ if __name__ == "__main__":
     ax.set_ylim(beta.max()*1e-8, beta.max()*10)
 
     ax = axs[3]
-    ax.plot(mass, fpbh)
+    mss = r'integrated $f_{pbh}$ = ' + f'{np.round(fpbh_integrated,3)}'
+    ax.plot(mass, fpbh, label=mss)
     ax.axhline(1, color="k", ls="--", alpha=0.5)
     ax.set_xscale("log")
     ax.set_yscale("log")
@@ -428,6 +435,7 @@ if __name__ == "__main__":
     ax.set_xlabel(r"$m_{PBH}\ [M_{\rm sun}]$")
     ax.set_xlim(max(mass), min(mass))
 
+    plt.legend()
     plt.tight_layout()
     plt.savefig(PLOTSPATH + "/example_abundances.png")
     plt.show()

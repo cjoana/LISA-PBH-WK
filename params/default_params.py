@@ -89,18 +89,18 @@ class p_CosmologicalParameters:
 class p_PowerSpectrumGaussian:
     def __init__(self):
         self.name = "gaussian"
-        self.kp = 2.e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
-        self.AsPBH = 0.0205      # Power spectrum amplitude at the reference scale kp.
-        self.sigma =  0.2        # Power spectrum variance.
+        self.kp = 2.e6        # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        self.AsPBH = 0.0025        # Power spectrum amplitude at the reference scale kp.
+        self.sigma =  0.25        # Power spectrum variance.
 
 @prevent_new_attrs
 class p_PowerSpectrumPowerlaw:
     def __init__(self):
         self.name = "powerlaw"
-        self.ktrans = 1.e0      # Scale of the transition between CMB amplitude and PBH amplitude
-        self.nsPBH = 0.97       # Spectral index
+        self.ktrans = 2.e6      # Scale of the transition between CMB amplitude and PBH amplitude
+        self.nsPBH = 0.65       # Spectral index
         self.kp = 2.e6          # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
-        self.AsPBH = 0.0205     # Power spectrum amplitude at the reference scale kp.
+        self.AsPBH = 1e-2     # Power spectrum amplitude at the reference scale kp.
 
 @prevent_new_attrs
 class p_PowerSpectrumLogNormal:
@@ -114,15 +114,15 @@ class p_PowerSpectrumLogNormal:
 class p_PowerSpectrumBrokenPowerlaw:
     def __init__(self):
         self.name = "broken_powerlaw"
-        self.kp = 2.e6               # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
-        self.AsPBH = 0.0205          # Power spectrum amplitude at the reference scale kp.
+        # kp = 2.e6               # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        # AsPBH = 0.0205          # Power spectrum amplitude at the reference scale kp.
         self.kc = 2.e6               # k critical: splits btw low/high
-        self.kp_low = self.kp
-        self.kp_high = self.kp
-        self.AsPBH_low = self.AsPBH
-        self.AsPBH_high = self.AsPBH
-        self.ns_low = -0.1
-        self.ns_high = -0.5
+        self.kp_low = 2.e6
+        self.kp_high = 2.e6
+        self.AsPBH_low = 0.001
+        self.AsPBH_high = 0.001
+        self.ns_low = 2.5
+        self.ns_high = 0.5
 
 @prevent_new_attrs
 class p_PowerSpectrumMultifield:
@@ -214,7 +214,7 @@ class p_PowerSpectrum:
 class p_PBHFormationModelStandard:
     def __init__(self):  
         self.name = "standard"
-        self.deltacr_rad = 0.41  #1.02
+        self.deltacr_rad = 0.5 # 0.41  #1.02
 
 # Musco20 formation model
 @prevent_new_attrs

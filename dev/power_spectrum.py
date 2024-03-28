@@ -169,8 +169,8 @@ class PS_BrokenPowerlaw(PS_Base):
 
         PS = np.zeros_like(kk)
         mask = (kk < self.kc)
-        PS[mask] = self.As_low * (kk[mask] / self.kp_low) ** self.ns_low
-        PS[~mask] = self.As_high * (kk[~mask] / self.kp_high) ** self.ns_high
+        PS[mask] = self.As_low * (kk[mask] / self.kp_low) ** (self.ns_low -1)
+        PS[~mask] = self.As_high * (kk[~mask] / self.kp_high) ** (self.ns_high - 1)
         return PS
 
 
