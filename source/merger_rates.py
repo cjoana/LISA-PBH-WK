@@ -30,7 +30,7 @@ from abundances import CLASSabundances
 
 # from user_params import cosmo_params, physics_units
 from params.user_params import physics_units, cosmo_params, PSModels_params
-from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import Thresholds_params, MerginRates_params
 from params.user_params import verbose 
 
 
