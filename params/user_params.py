@@ -16,23 +16,23 @@ PSModels_params = p_PowerSpectrumModels()
 
 
 # PBH formation params
-PBHFormation_params = p_PBHFormation()
-# PBHFormation_params.selected_model = 'Musco20'                    # e.g.:  'standard' (default), 'Musco20'
-PBHFormation_params.models.Musco20.eta = 0.1
+Thresholds_params = p_Thresholds()
+# Thresholds_params.selected_model = 'ShapePrescription'                    # e.g.:  'standard' (default), 'ShapePrescription'
+Thresholds_params.models.ShapePrescription.eta = 0.1
 
-PBHFormation_params.ratio_mPBH_over_mH = 0.2            # Ratio between PBH and Hubble masses at formation
-PBHFormation_params.kmsun = 2.1e6                       # frequency related to one Solar Mass 
-PBHFormation_params.PS_rescaling = False                  # option to rescale the power spectrum to get a fixed DM fraction
-PBHFormation_params.forcedfPBH = 1.                     # Imposed DM fraction made of PBHs
-PBHFormation_params.PS_scalingfactor = 1.
+Thresholds_params.ratio_mPBH_over_mH = 0.2            # Ratio between PBH and Hubble masses at formation
+Thresholds_params.kmsun = 2.1e6                       # frequency related to one Solar Mass 
+Thresholds_params.PS_rescaling = False                  # option to rescale the power spectrum to get a fixed DM fraction
+Thresholds_params.forcedfPBH = 1.                     # Imposed DM fraction made of PBHs
+Thresholds_params.PS_scalingfactor = 1.
 
 # Usage of Thermal History
-PBHFormation_params.use_thermal_history = True         # option to include the effect of the equation-of-state changes
+Thresholds_params.use_thermal_history = True         # option to include the effect of the equation-of-state changes
                                                   # due to the known thermal history  (needs 'zetacr_file' paths)
-PBHFormation_params.data_directory = datadir
-PBHFormation_params.zetacr_thermal_file = zetacr_file  # File of the evolution of zeta_cr with thermal history
-PBHFormation_params.zetacr_thermal_rad = 1.02          # Reference value of zeta_cr for this file
-PBHFormation_params.Gaussian = True                    # Using Gaussian approx. (Currently only option)
+Thresholds_params.data_directory = datadir
+Thresholds_params.zetacr_thermal_file = zetacr_file  # File of the evolution of zeta_cr with thermal history
+Thresholds_params.zetacr_thermal_rad = 1.02          # Reference value of zeta_cr for this file
+Thresholds_params.Gaussian = True                    # Using Gaussian approx. (Currently only option)
 
 
 # PBH Merging models
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     print("c= ", physics_units.c)
 
     print("I have chosen a PS : ", PS_params.model)
-    print("I have chosen to compute thresholds with  : ", PBHFormation_params.model)
+    print("I have chosen to compute thresholds with  : ", Thresholds_params.model)
 
     # This should break the code as variables don't exist (typos)  # Test
     print("Performing error test, trying to set an un-existing parameters...")

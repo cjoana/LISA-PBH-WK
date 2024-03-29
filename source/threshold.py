@@ -19,10 +19,10 @@ sys.path.append(PARAMSPATH)
 
 # from user_params import cosmo_params, physics_units, PBHForm
 from params.user_params import physics_units, cosmo_params, PSModels_params
-from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import Thresholds_params, MerginRates_params
 from params.user_params import verbose 
 
-PBHForm = PBHFormation_params
+ThresholdsParams = Thresholds_params
 
 
 verbose = 0
@@ -31,7 +31,7 @@ verbose = 0
 class ClassDeltaCritical: 
 
     def __init__(self):
-        self.pm=PBHForm
+        self.pm=ThresholdsParams
         self.cp=cosmo_params
         # self.thermalhistory_func = self.get_thermalfactor
         self.thermalhistory_func = self.get_thermalfactor_from_file
@@ -96,13 +96,13 @@ class ClassDeltaCritical:
         return deltacr_with_th
     
 
-class ClassPBHFormationMusco20(ClassDeltaCritical):
+class ClassThresholdsShapePrescription(ClassDeltaCritical):
 
     def __init__(self, 
                        ps_function, 
-                       eta=PBHForm.models.Musco20.eta,                      
-                       k_star=PBHForm.models.Musco20.k_star,                      
-                       ps_scalefactor=PBHForm.PS_scalingfactor,     # reserved re-scaling of PS to vary f_PBH, (default scale=1)
+                       eta=ThresholdsParams.models.ShapePrescription.eta,                      
+                       k_star=ThresholdsParams.models.ShapePrescription.k_star,                      
+                       ps_scalefactor=ThresholdsParams.PS_scalingfactor,     # reserved re-scaling of PS to vary f_PBH, (default scale=1)
                        force_method=False,
                        pm=False, cp=False, thermalhistory_func=False ):
         super().__init__()
@@ -117,7 +117,7 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
 
         # if verbose >2: print( 'FormPBHMusco (class) set  Pk to ', Pk_model)
 
-    # List of fnctions for the computations of delta_critical based on the method Musco20
+    # List of fnctions for the computations of delta_critical based on the method ShapePrescription
     def TransferFunction(self, k, t):
         sq = 1. / np.sqrt(3)
         arg = k * t * sq
@@ -226,7 +226,7 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
             if self.force_method:  
                 raise Exception(err_msg)
 
-            return  ClassPBHFormationStandard(self.ps_function).get_deltacr()
+            return  ClassThresholdsStandard(self.ps_function).get_deltacr()
         
     def get_deltacr(self):
         # print("getting delta_cr with eta =  ", self.eta,  " kp =", self.kp) #TODO :clean
@@ -246,7 +246,7 @@ class ClassPBHFormationMusco20(ClassDeltaCritical):
         return deltacr
 
 
-class ClassPBHFormationStandard(ClassDeltaCritical):
+class ClassThresholdsStandard(ClassDeltaCritical):
 
     def __init__(self, PS_func, pm=False, cp=False, thermalhistory_func=False):
         super().__init__()
@@ -262,8 +262,8 @@ class ClassPBHFormationStandard(ClassDeltaCritical):
         return deltacr_rad
 
 class ClassThresholds:
-    standard = ClassPBHFormationStandard
-    Musco20 = ClassPBHFormationMusco20
+    standard = ClassThresholdsStandard
+    ShapePrescription = ClassThresholdsShapePrescription
 
 
 
@@ -296,15 +296,15 @@ if __name__ == "__main__":
 
     print("\n")
     print("Example using Standard formalism:  ")
-    deltacrit = ClassPBHFormationStandard(PS_func=PS_func)
+    deltacrit = ClassThresholdsStandard(PS_func=PS_func)
 
     dc = deltacrit.get_deltacr()
     dc_thermal = deltacrit.get_deltacr_with_thermalhistory(mPBH)
     print(" >> delta crit without / with thermal history ", dc, dc_thermal)
 
     print("\n")
-    print("Example using Musco formalism: ")
-    deltacrit = ClassPBHFormationMusco20(ps_function=PS_func)
+    print("Example using Shape Prescription formalism: ")
+    deltacrit = ClassThresholdsShapePrescription(ps_function=PS_func)
 
     dc = deltacrit.get_deltacr()
     dc_thermal = deltacrit.get_deltacr_with_thermalhistory(mPBH)
@@ -317,13 +317,13 @@ if __name__ == "__main__":
     # thermalhistory_func = th_func    
     # print("\n")
     # print("Example using Standard formalism (own thermal func.):  ")
-    # deltacrit = ClassPBHFormationStandard(PS_func=PS_func, thermalhistory_func=thermalhistory_func )
+    # deltacrit = ClassThresholdsStandard(PS_func=PS_func, thermalhistory_func=thermalhistory_func )
     # dc = deltacrit.get_deltacr()
     # dc_thermal = deltacrit.get_deltacr_with_thermalhistory(mPBH)
     # print(" >> delta crit without / with thermal history ", dc, dc_thermal)
     # print("\n")
     # print("Example using Musco formalism: ")
-    # deltacrit = ClassPBHFormationMusco20(PS_func=PS_func, thermalhistory_func=thermalhistory_func)
+    # deltacrit = ClassThresholdsShapePrescription(PS_func=PS_func, thermalhistory_func=thermalhistory_func)
     # mPBH = 1.0
     # dc = deltacrit.get_deltacr()
     # dc_thermal = deltacrit.get_deltacr_with_thermalhistory(mPBH)

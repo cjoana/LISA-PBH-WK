@@ -67,12 +67,12 @@ class CLASSabundances:
     def compute_rescaling(self, fpbh_rescaling):
             
             self.forcedfPBH = fpbh_rescaling
-            print("Step 1b: Rescaling of the power spectrum to get f_PBH =", self.forcedfPBH)
+            if verbose: print("Step 1b: Rescaling of the power spectrum to get f_PBH =", self.forcedfPBH)
 
             def function_to_find_root(scaling):
                 # function to find the required scaling of the primoridal power spectrum to get a value of f_PBH determined by the user
                 
-                print("scaling : ", 10 ** scaling)
+                if verbose: print("New scaling : ", 10 ** scaling)
                 self.ps_scalingfactor = 10 ** scaling
                 a = self.get_integrated_fPBH()
                 b = self.forced_fPBH
@@ -84,11 +84,11 @@ class CLASSabundances:
                 self.ps_scalingfactor = 10 ** sol
             except ValueError as e:
                 self.ps_scalingfactor = 1.
-                print(" !!! Rescaling didn't converge, assuming PS has no peak, so fPBH = 0 ")
+                if verbose: print(" !!! Ups, rescaling didn't converge , assuming fPBH = 0 ")
 
-            print("After rescaling, I get a total abundance of PBHs: fPBH=", self.get_integrated_fPBH() )
-            print("Rescaling factor=", self.ps_scalingfactor)
-            print("====")
+            if verbose: print("After rescaling, I get a total abundance of PBHs: fPBH=", self.get_integrated_fPBH() )
+            if verbose: print("Rescaling factor=", self.ps_scalingfactor)
+            if verbose: print("====")
             
             return self.ps_scalingfactor 
 

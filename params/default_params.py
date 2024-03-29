@@ -18,7 +18,7 @@ This file contain several classes to store parameters:
 
     *   PBH formation models
         *   standard formation model
-        *   Musco20 model
+        *   ShapePrescription model
 
     *   Mergin rates
         *   PBH binaries
@@ -211,32 +211,32 @@ class p_PowerSpectrum:
 
 # standard formation model
 @prevent_new_attrs
-class p_PBHFormationModelStandard:
+class p_ThresholdsModelStandard:
     def __init__(self):  
         self.name = "standard"
         self.deltacr_rad = 0.5 # 0.41  #1.02
 
-# Musco20 formation model
+# ShapePrescription formation model
 @prevent_new_attrs
-class p_PBHFormationModelMusco20:
+class p_ThresholdsModelShapePrescription:
     def __init__(self):
-        self.name = "Musco20"
+        self.name = "ShapePrescription"
         self.eta = 0.1
         self.k_star =  2.1e6
 
 # Collection of params for PBH formation models 
 @prevent_new_attrs
-class p_PBHFormationModel:
-    # standard = p_PBHFormationModelStandard()
-    # Musco20 = p_PBHFormationModelMusco20()
+class p_ThresholdsModel:
+    # standard = p_ThresholdsModelStandard()
+    # ShapePrescription = p_ThresholdsModelShapePrescription()
     def __init__(self):
-        self.standard = p_PBHFormationModelStandard()
-        self.Musco20 = p_PBHFormationModelMusco20()
+        self.standard = p_ThresholdsModelStandard()
+        self.ShapePrescription = p_ThresholdsModelShapePrescription()
 
 # General params for PBH formation
 @prevent_new_attrs
-class p_PBHFormation:
-    # p_model=p_PBHFormationModel()
+class p_Thresholds:
+    # p_model=p_ThresholdsModel()
 
     def __init__(self):
 
@@ -254,10 +254,10 @@ class p_PBHFormation:
         
         # default model selection
         # self.selected_model = 'standard'
-        self.models = p_PBHFormationModel()
+        self.models = p_ThresholdsModel()
 
         # class containing specific model params 
-        # self.p_model = p_PBHFormationModel()
+        # self.p_model = p_ThresholdsModel()
 
 
 #######################################################################
