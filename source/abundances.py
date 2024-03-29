@@ -26,13 +26,13 @@ from threshold import ClassThresholds
 
 # from params.user_params import cosmo_params, physics_units, PBHForm
 from params.user_params import physics_units, cosmo_params, PSModels_params
-from params.user_params import PBHFormation_params, MerginRates_params
+from params.user_params import Thresholds_params, MerginRates_params
 from params.user_params import verbose 
 
 
 
 
-# from threshold import ClassPBHFormationMusco20
+# from threshold import ClassThresholdsShapePrescription
 
 
 
@@ -244,7 +244,7 @@ class CLASSabundances:
     def get_deltacritical(self, mPBH = False):
 
         # TODO: implement or call threshold class
-        # self.threshold_method = "Musco20"
+        # self.threshold_method = "ShapePrescription"
         # self.threshold_method = "standard"
         Msun = physics_units.m_sun
 
@@ -252,9 +252,9 @@ class CLASSabundances:
             if self.thermal_history: return ClassThresholds.standard(PS_func=self.ps_of_k).get_deltacr_with_thermalhistory(mPBH)
             else: return ClassThresholds.standard(PS_func=self.ps_of_k).get_deltacr()
 
-        elif self.threshold_method == "Musco20":
-            if self.thermal_history: return ClassThresholds.Musco20(ps_function=self.ps_of_k).get_deltacr_with_thermalhistory(mPBH)
-            else: return ClassThresholds.Musco20(ps_function=self.ps_of_k).get_deltacr()
+        elif self.threshold_method == "ShapePrescription":
+            if self.thermal_history: return ClassThresholds.ShapePrescription(ps_function=self.ps_of_k).get_deltacr_with_thermalhistory(mPBH)
+            else: return ClassThresholds.ShapePrescription(ps_function=self.ps_of_k).get_deltacr()
 
         else:
             raise ValueError("selected method for evaluating PBH threshold is not yet suported.")
@@ -383,7 +383,7 @@ if __name__ == "__main__":
     
     ## Select threshold calc method
     a = CLASSabundances(ps_function = PS_func, threshold_method="standard")
-    # a = CLASSabundances(PS_function = PS_func, threshold_method="Musco20")
+    # a = CLASSabundances(PS_function = PS_func, threshold_method="ShapePrescription")
 
     ## Params range: 
     # mass = 10**np.linspace(-10,20, 1000)  #* Msun
