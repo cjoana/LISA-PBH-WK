@@ -80,7 +80,7 @@ class CLASSabundances:
                 return function
 
             try:
-                sol = opt.bisect(function_to_find_root, -5, 5, rtol=1.e-5, maxiter=100)
+                sol = opt.bisect(function_to_find_root, -5, 5, rtol=1.e-4, maxiter=100)
                 self.ps_scalingfactor = 10 ** sol
             except ValueError as e:
                 self.ps_scalingfactor = 1.

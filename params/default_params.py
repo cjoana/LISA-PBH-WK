@@ -89,24 +89,24 @@ class p_CosmologicalParameters:
 class p_PowerSpectrumGaussian:
     def __init__(self):
         self.name = "gaussian"
-        self.kp = 2.e6        # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
-        self.AsPBH = 0.0025        # Power spectrum amplitude at the reference scale kp.
+        self.kp = 5e6             # Reference scale [mpc^-1] (5e6 corresponds to mPBH ~ 1 Msun)
+        self.AsPBH = 0.0025       # Power spectrum amplitude at the reference scale kp.
         self.sigma =  0.25        # Power spectrum variance.
 
 @prevent_new_attrs
 class p_PowerSpectrumPowerlaw:
     def __init__(self):
         self.name = "powerlaw"
-        self.ktrans = 2.e6      # Scale of the transition between CMB amplitude and PBH amplitude
+        self.ktrans = 5e6      # Scale of the transition between CMB amplitude and PBH amplitude
         self.nsPBH = 0.65       # Spectral index
-        self.kp = 2.e6          # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        self.kp = 5e6          # Reference scale [mpc^-1] (5e6 corresponds to mPBH ~ 1 Msun)
         self.AsPBH = 1e-2     # Power spectrum amplitude at the reference scale kp.
 
 @prevent_new_attrs
 class p_PowerSpectrumLogNormal:
     def __init__(self):
         self.name = "lognormal"
-        self.kp = 2.e6         # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        self.kp = 5e6          # Reference scale [mpc^-1] (5e6 corresponds to mPBH ~ 1 Msun)
         self.AsPBH = 0.0205    # Power spectrum amplitude at the reference scale kp.
         self.sigma = 1.        # Power spectrum amplitude at the reference scale kp.
 
@@ -114,11 +114,11 @@ class p_PowerSpectrumLogNormal:
 class p_PowerSpectrumBrokenPowerlaw:
     def __init__(self):
         self.name = "broken_powerlaw"
-        # kp = 2.e6               # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        # kp = 2.e6               # Reference scale [mpc^-1] (5e6 corresponds to mPBH ~ 1 Msun)
         # AsPBH = 0.0205          # Power spectrum amplitude at the reference scale kp.
-        self.kc = 2.e6               # k critical: splits btw low/high
-        self.kp_low = 2.e6
-        self.kp_high = 2.e6
+        self.kc = 5e6               # k critical: splits btw low/high
+        self.kp_low = 5e6
+        self.kp_high = 5e6
         self.AsPBH_low = 0.001
         self.AsPBH_high = 0.001
         self.ns_low = 2.5
@@ -128,7 +128,7 @@ class p_PowerSpectrumBrokenPowerlaw:
 class p_PowerSpectrumMultifield:
     def __init__(self):
         self.name = "multifield"
-        self.kf = 2e6             # scale H-crossing at sharp turn  [mpc^-1]
+        self.kf = 5e6             # scale H-crossing at sharp turn  [mpc^-1]
         self.P0 = 2e-9            # Amplitude Pk in absence of transient instability
         self.eta = 4.             # TODO: check value
         self.delta = 2.2          # TODO: check value
@@ -138,7 +138,7 @@ class p_PowerSpectrumMultifield:
 class p_PowerSpectrumAxionGauge:
     def __init__(self):
         self.name = "axion_gauge"
-        self.kp = 2.1e6           # Reference scale [mpc^-1] (2.e6 corresponds to mPBH = 1 Msun)
+        self.kp = 5e6             # Reference scale [mpc^-1] (5e6 corresponds to mPBH ~ 1 Msun)
         self.As_vac = 0.0205      # TODO: k-dependent
         self.AsPBH = 0.0205       # TODO: k-dependent
         self.sigma = 1.           # TODO: k-dependent
@@ -147,7 +147,7 @@ class p_PowerSpectrumAxionGauge:
 class p_PowerSpectrumPreheating:
     def __init__(self):
         self.name = "preheating"
-        self.kend = 2.e6             #
+        self.kend = 5e6             #
         self.Hstar = 1.0e14          # TODO: k-dependent
         self.e1 = 0.01               # TODO: k-dependent
         self.e2 = 0.0001             # TODO: k-dependent

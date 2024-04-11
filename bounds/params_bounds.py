@@ -34,7 +34,8 @@ sel_files = [
         ["HSC_cons.txt",        "HSC",           "b"   , 1 ],
         ["Kepler.txt",          "Kepler",       'gold' , 2 ],
         ["EROS.txt",              "EROS",        "black"   , (1,1,2) ],
-        ["OGLE.txt",             "OGLE",     'gray' , 1 ],
+        #["OGLE.txt",             "OGLE",     'gray' , 1 ],
+        ["OGLE2024.txt",         "OGLE",     'gray' , 1 ],
         #
         # High Mass
         ["ICARUS.txt",          "ICARUS",        'm'   , 1 ],
