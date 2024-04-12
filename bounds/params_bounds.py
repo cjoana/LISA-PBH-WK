@@ -35,7 +35,7 @@ sel_files = [
         ["Kepler.txt",          "Kepler",       'gold' , 2 ],
         ["EROS.txt",              "EROS",        "black"   , (1,1,2) ],
         #["OGLE.txt",             "OGLE",     'gray' , 1 ],
-        ["OGLE2024.txt",         "OGLE",     'gray' , 1 ],
+        ["OGLE2024.txt",         "OGLE",     'gray' , 1 ],				# arxiv: 2403.02386
         #
         # High Mass
         ["ICARUS.txt",          "ICARUS",        'm'   , 1 ],
@@ -48,6 +48,7 @@ sel_files = [
         ["CMB_Kamio_photo.txt",  "CMB AK2",        "b"     , 3 ],      #  arxiv: 1612.05644 (2)
         ["CMB_Serpico_P.txt",    "CMB PSCCK",        "k"     , 3 ],    #	arxiv: 1707.04206
         ["cmb_FLC.txt", 		 "CMB FLC22", 'darkblue',  2],		# arxiv: 2212.07969
+        ["CMB_conservative.txt", "CMB AEGSSM", 'darkblue',  2],		# arxiv:  2403.18895
         ["SegueI.txt",           "Segue I" ,  "green",  2 ],
         ["EridanusII.txt",       "Eridanus II",   'm'   , 2 ],
         ["XRayB.txt",            "XRay binaries",     "orange" , 3 ],
