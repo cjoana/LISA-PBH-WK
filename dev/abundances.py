@@ -369,9 +369,13 @@ if __name__ == "__main__":
     Msun = physics_units.m_sun
 
     ## Model A: Gaussian
-    sig =  0.25
+    # sig =  0.25
+    # As = 0.01*sig
+    # kp = 1e6
+    # PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
+    sig =  0.3
     As = 0.01*sig
-    kp = 1e6
+    kp = 5e9
     PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
     
     ## Model B : axion_gauge
@@ -387,7 +391,7 @@ if __name__ == "__main__":
 
     ## Params range: 
     # mass = 10**np.linspace(-10,20, 1000)  #* Msun
-    mass = 10**np.linspace(-6,8, 500)  #* Msun
+    mass = 10**np.linspace(-15,6, 500)  #* Msun
 
     floor = 1e-8
     beta = a.get_beta(mass)  #+ floor

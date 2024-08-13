@@ -6,6 +6,19 @@ Basic models are included and others can be easily expanded.
 Need testing!!! 
 """
 
+""" TODO: 
+    * 'primodrial binaries' to be renamed as 'early binaries'. ( consistency with paper)
+    * 'cluster binaries' to be renamed as 'late binaries'. ( consistency with paper)
+    * 'disrupted early binaries' should be considered
+    * supression factor, fsub = (S1 * S2) in EB,  should be computed as a function of fpbh, m1 and m2
+
+    * fromula EB : WRONG, missing a factor
+    * formula LB:  WRONG, completely different as in paper. Eq. 4.9, in page 53. 
+
+
+"""
+
+
 import numpy as np
 import scipy.constants as const
 import scipy.special as special
@@ -34,10 +47,11 @@ from params.user_params import Thresholds_params, MerginRates_params
 from params.user_params import verbose 
 
 
+
 class MergerRates():    
     def __init__(self, masses=None, fpbhs=None):   
         self.Rclust = 400               # TODO : hardcode
-        self.fsup = 0.0025              # TODO : hardcode
+        self.fsup = 0.0025              # TODO : It assumes a given value, but it sould depend on fpbh, m1, m2. 
         self.ratio_mPBH_over_mH = 0.8   # TODO : hardcode
 
         self.masses = masses
@@ -52,10 +66,15 @@ class MergerRates():
         self.sol_rates_cluster = None        
 
 
-    def rates_primordial_binary(self, m1, m2, fpbh1, fpbh2):
-        norm = 1.6e6 # self.Rprim #TODO ?
-        rates = norm * self.fsup * fpbh1 * fpbh2   * \
+    def rates_primordial_binary(self, m1, m2, fpbh1, fpbh2):   #TODO : primordial should be renamed ad Early Binaries
+
+        rates = 1.6e6  * self.fsup * fpbh1 * fpbh2   * \
                     (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
+        
+
+        ## there is a factor missing:   f_pbh**(53/37)   
+
+
         return rates
 
         #### 
@@ -82,7 +101,7 @@ class MergerRates():
         return rates
 
 
-    def rates_cluster_binary(self, m1, m2, fpbh1, fpbh2):
+    def rates_cluster_binary(self, m1, m2, fpbh1, fpbh2):    #TODO: Formula wrong, or inconsistent with paper p.53
         norm = self.Rclust
         rates = norm * self.fsup * fpbh1 * fpbh2  * \
                     (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)

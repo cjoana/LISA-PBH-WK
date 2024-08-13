@@ -1,8 +1,6 @@
 """
 Second order SGWB from inflationary primordial scalar powerspectrum
 """
-import numpy as np
-from scipy.integrate import dblquad
 
 
 import sys, os
@@ -15,6 +13,8 @@ sys.path.append(SOURCEPATH)
 sys.path.append(PARAMSPATH)
 
 
+import numpy as np
+from scipy.integrate import dblquad
 
 from user_params import cosmo_params, physics_units
 

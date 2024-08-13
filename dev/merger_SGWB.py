@@ -2,6 +2,16 @@
 Code to evaluate SGWB originated by PBH mergers.  Code provided by Eleni and Satchiko (check?!)
 """
 
+import sys, os
+ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
+SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
+PARAMSPATH = os.path.abspath(os.path.join(ROOTPATH, 'params'))
+PLOTSPATH = os.path.abspath(os.path.join(ROOTPATH, 'plots'))
+sys.path.append(ROOTPATH)
+sys.path.append(SOURCEPATH)
+sys.path.append(PARAMSPATH)
+
+
 from abundances import CLASSabundances
 from user_params import cosmo_params, physics_units
 from default_params import p_PhysicsUnits as pu
