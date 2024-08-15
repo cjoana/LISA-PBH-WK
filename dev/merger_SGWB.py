@@ -36,6 +36,8 @@ class Backgrounds(MergerRates):
         self.logm1max = np.log10(mPBHmax)
         self.logm2max = np.log10(mPBHmax)
 
+        self.fpbh_integrated = 1  # TODO: this need to be computed
+
 #    def make_t_of_z(self):        
 #        N = 200   # making a list of redshifts z from 0 to 100 in logspace, with small step(before : N = 1000, z_min = 1e-30)
 #        z_min = 1e-4 
@@ -64,7 +66,7 @@ class Backgrounds(MergerRates):
             else:
                 integrant = freq**(-4./3.) *(4. * pu().G**(5./3.)) / (3. * np.pi**(1./.3)\
                              * pu().c**2) * mc53 * z_dep \
-                             * rate_model(10.**logm1,10.**logm2,fPBH1,fPBH2) / pu().year / ((1.E3*pu().mpc)**3) 
+                             * rate_model(self.fpbh_integrated, 10.**logm1,10.**logm2,fPBH1,fPBH2) / pu().year / ((1.E3*pu().mpc)**3) 
             
             return integrant
 
@@ -101,12 +103,12 @@ class Backgrounds(MergerRates):
 
     def Get_GW_bkg_primordial_binary(self, freq):    
         
-        GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_primordial_binary)
+        GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_early_binaries)
         #print('gw_bkg_primordial: ', GW_bkg)
         return GW_bkg
         
     def Get_GW_bkg_cluster_binary(self, freq):
-        GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_cluster_binary)
+        GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_late_binaries)
         #print('gw_bkg_cluster: ', GW_bkg)
         return GW_bkg
  
@@ -128,7 +130,10 @@ if __name__ == "__main__":
 
     my_abundances = CLASSabundances(ps_function=PS_func)
     fpbhs = my_abundances.get_fPBH(masses)
-    sol = MergerRates().get_rates_clusters(masses, fpbhs)
+    fpbh_integrated = 1
+
+
+    sol = MergerRates().get_rates_late_binaries(fpbh_integrated, masses, fpbhs)
     my_backgrounds = Backgrounds(my_abundances)
 
     logfmin=-10

@@ -38,23 +38,26 @@ class SecondOrderSGWB():
 
 
     # Functions to compute the SGWB from second order perturbations
-    def IC2(self, d, s):
+    def IC2(self, d, s): #TODO:  why do not simplify
         return -36 * np.pi * (s**2 + d**2 - 2)**2 / (s**2 - d**2)**3 * np.heaviside(s - 1, 1)
 
     def IS2(self, d, s):
         return -36 * (s**2 + d**2 - 2) / (s**2 - d**2)**2 * \
             ( (s**2 + d**2 - 2) / (s**2 - d**2) * np.log((1 - d**2) / np.absolute(s**2 - 1)) + 2)
 
-    def IcsEnvXY(self, x, y):
-        return np.sqrt(self.IC2(np.absolute(x - y) / (3**0.5), np.absolute(x + y) / (3**0.5))**2 + \
-                self.IS2(np.absolute(x - y) / (3**0.5), np.absolute(x + y) / (3**0.5))**2)
+    def IcsEnvXY(self, x, y):  #TODO: why sqrt, if later is squared in 'compint'
+        return np.sqrt( \
+                self.IC2(np.absolute(x - y) / (3**0.5), np.absolute(x + y) / (3**0.5))**2 \
+                    + \
+                self.IS2(np.absolute(x - y) / (3**0.5), np.absolute(x + y) / (3**0.5))**2 \
+                )
 
     # Integral returning the spectrum
     def compint(self, kvval, sigmaps):
 
         kcoef = self.mpc / self.c
 
-        value, error = dblquad(lambda x, y:
+        value, error = dblquad(lambda x, y:       # TODO: check this formula, why repetition of ps_function??
                                 x**2 / y**2 * (1 - (1 + x**2 - y**2)**2 / (4 * x**2))**2
                                 * self.ps_function(kvval * kcoef) * self.ps_scalingfactor  # PS(kvval*x)
                                 * self.ps_function(kvval * kcoef) * self.ps_scalingfactor  # PS(kvval*y)

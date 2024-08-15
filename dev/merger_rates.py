@@ -7,13 +7,13 @@ Need testing!!!
 """
 
 """ TODO: 
-    * 'primodrial binaries' to be renamed as 'early binaries'. ( consistency with paper)
-    * 'cluster binaries' to be renamed as 'late binaries'. ( consistency with paper)
+    X 'primodrial binaries' to be renamed as 'early binaries'. ( consistency with paper)
+    X 'cluster binaries' to be renamed as 'late binaries'. ( consistency with paper)
     * 'disrupted early binaries' should be considered
     * supression factor, fsub = (S1 * S2) in EB,  should be computed as a function of fpbh, m1 and m2
 
-    * fromula EB : WRONG, missing a factor
-    * formula LB:  WRONG, completely different as in paper. Eq. 4.9, in page 53. 
+    X fromula EB : WRONG, missing a factor
+    X formula LB:  WRONG, completely different as in paper. Eq. 4.9, in page 53. 
 
 
 """
@@ -49,45 +49,49 @@ from params.user_params import verbose
 
 
 class MergerRates():    
-    def __init__(self, masses=None, fpbhs=None):   
+    def __init__(self, masses=None, fpbhs=None, fpbh_integrated=None):   
         self.Rclust = 400               # TODO : hardcode
         self.fsup = 0.0025              # TODO : It assumes a given value, but it sould depend on fpbh, m1, m2. 
         self.ratio_mPBH_over_mH = 0.8   # TODO : hardcode
 
         self.masses = masses
         self.fpbhs = fpbhs
+        self.fpbh_integrated = fpbh_integrated
 
         self.Omc = cosmo_params.Omc
         self.Omb = cosmo_params.Omb
 
 
         # output
-        self.sol_rates_primordial = None
-        self.sol_rates_cluster = None        
+        self.sol_rates_early_binaries = None
+        self.sol_rates_late_binaries = None        
 
 
-    def rates_primordial_binary(self, m1, m2, fpbh1, fpbh2):   #TODO : primordial should be renamed ad Early Binaries
+    def rates_early_binaries(self, m1, m2, fm1, fm2, fpbh_total):   #TODO : primordial should be renamed ad Early Binaries
 
-        rates = 1.6e6  * self.fsup * fpbh1 * fpbh2   * \
-                    (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
-        
+        # assuming fidutial suppression_factor
+        suppression_factor = self.fsup
 
-        ## there is a factor missing:   f_pbh**(53/37)   
-
+        # assuming masses in Msun. 
+        rates = 1.6e6  * suppression_factor * fpbh_total**(53/37) * fm1 * fm2   * \
+                    (m1 + m2) ** (-32/37) * (m1 * m2 / (m1 + m2)**2) ** (-34/37)
 
         return rates
 
-        #### 
-    def get_rates_primordial(self, masses=None, fpbhs=None):
+    def get_rates_early_binaries(self, fpbh_total=1, masses=None, fpbhs=None):
+        
+        if isinstance(fpbh_total, bool):
+            fpbh_total = self.fpbh_integrated
+            if not fpbh_total: raise ValueError("Value for the fpbh_total is not set. (get_rates_early_binaries)")
+
         if isinstance(masses, bool):
             masses = self.masses
-            if not masses: raise ValueError("Values for the masses are not set. (get_rates_primordial)")
+            if not masses: raise ValueError("Values for the masses are not set. (get_rates_early_binaries)")
         if isinstance(fpbhs, bool):
             fpbhs = self.fpbhs
-            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_primordial)")
+            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_early_binaries)")
 
         # Computes the merging rates of primordial binaries
-        # norm = 1.6e6
         Nmass = len(masses)
         rates = np.zeros([Nmass, Nmass]) * np.nan
         for ii in range(Nmass):
@@ -96,24 +100,34 @@ class MergerRates():
             for jj in range(ii):
                 m2 = masses[jj]
                 fpbh2 = fpbhs[jj]
-                rates[ii,jj] = self.rates_primordial_binary(m1, m2, fpbh1, fpbh2)
-        self.sol_rates_primordial = rates
+                rates[ii,jj] = self.rates_early_binaries(m1, m2, fpbh1, fpbh2, fpbh_total)
+        self.sol_rates_early_binaries = rates
         return rates
 
 
-    def rates_cluster_binary(self, m1, m2, fpbh1, fpbh2):    #TODO: Formula wrong, or inconsistent with paper p.53
-        norm = self.Rclust
-        rates = norm * self.fsup * fpbh1 * fpbh2  * \
-                    (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
+    def rates_late_binaries(self, m1, m2, fm1, fm2, fpbh_total):    #TODO: Formula wrong, or inconsistent with paper p.53
+        
+        # Assuming fidtual Rclust (typically btw 100 and 1000).
+        Rclust = self.Rclust
+
+        # Assuming no suppression factors from late binaries
+        rates = Rclust * fpbh_total**2 * fm1 * fm2  * \
+                    (m1 + m2)**(10/7) * (m1 * m2)** (-5/7)
+                    # (m1 + m2) ** (-32. / 37.) * (m1 * m2 / (m1 + m2) ** 2) ** (-34. / 37.)
+
         return rates
 
-    def get_rates_clusters(self, masses=None, fpbhs=None):
+    def get_rates_late_binaries(self, fpbh_total=None, masses=None, fpbhs=None):
+
+        if isinstance(fpbh_total, bool):
+            fpbh_total = self.fpbh_integrated
+            if not fpbh_total: raise ValueError("Value for the fpbh_total is not set. (get_rates_late_binaries)")
         if isinstance(masses, bool):
             masses = self.masses
-            if not masses: raise ValueError("Values for the masses are not set. (get_rates_clusters)")
+            if not masses: raise ValueError("Values for the masses are not set. (get_rates_late_binaries)")
         if isinstance(fpbhs, bool):
             fpbhs = self.fpbhs
-            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_clusters)")
+            if not fpbhs: raise ValueError("Values for the fpbhs are not set. (get_rates_late_binaries)")
 
         # Computes the merging rates for tidal capture in PBH clusters
         Nmass = len(masses) 
@@ -124,27 +138,27 @@ class MergerRates():
             for jj in range(ii):
                 m2 = masses[jj]
                 fpbh2 = fpbhs[jj]
-                rates[ii,jj] = self.rates_cluster_binary(m1, m2, fpbh1, fpbh2)
-        self.sol_rates_cluster = rates
+                rates[ii,jj] = self.rates_late_binaries(m1, m2, fpbh1, fpbh2, fpbh_total)
+        self.sol_rates_late_binaries = rates
         return rates
 
-    def eval_oldcode(self):
-        # Compute the merging rates
-        print("Step 3:  Computation of the PBH merging rates")
-        print("====")
-        self.sol_rates_primordial = np.zeros((self.Nmass, self.Nmass))
-        self.sol_rates_cluster = np.zeros((self.Nmass, self.Nmass))
-        if self.merging_want_primordial == True:
-            self.sol_rates_primordial = self.rates_primordial()
-            print("Merging rates of primordial binaries have been calculated")
-            print("====")
+    # def eval_oldcode(self):
+    #     # Compute the merging rates
+    #     print("Step 3:  Computation of the PBH merging rates")
+    #     print("====")
+    #     self.sol_rates_early_binaries = np.zeros((self.Nmass, self.Nmass))
+    #     self.sol_rates_cluster = np.zeros((self.Nmass, self.Nmass))
+    #     if self.merging_want_primordial == True:
+    #         self.sol_rates_early_binaries = self.rates_primordial()
+    #         print("Merging rates of primordial binaries have been calculated")
+    #         print("====")
 
-        if self.merging_want_clusters == True:
-            self.sol_rates_cluster = self.rates_clusters()
-            print("Merging rates of binaries formed by capture in clusters have been calculated")
-            print("====")
+    #     if self.merging_want_clusters == True:
+    #         self.sol_rates_cluster = self.rates_clusters()
+    #         print("Merging rates of binaries formed by capture in clusters have been calculated")
+    #         print("====")
 
-        print("End of code, at the moment...  Thank you for having used PrimBholes")
+    #     print("End of code, at the moment...  Thank you for having used PrimBholes")
 
 
 
@@ -155,47 +169,85 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from matplotlib import ticker, cm
     
-    masses =  10**np.linspace(-3,4, 50)  
+    masses =  10**np.linspace(-10,0, 100)  
 
     # PS_model = PowerSpectrum.gaussian(kp=2.e6, As=0.0205, sigma=1.)
     # PS_func =  PS_model.PS
     
-    def PS_func(kk):
-        AsPBH, kp, sigma = [0.00205, 2.e6, 1.]
-        # AsPBH *= 1.183767
-        return AsPBH * np.exp(- np.log(kk / kp) ** 2 / (2 * sigma ** 2))
+    # def PS_func(kk):
+    #     AsPBH, kp, sigma = [0.01, 1.e7, 0.25]
+    #     # AsPBH *= 1.183767
+    #     return AsPBH * np.exp(- np.log(kk / kp) ** 2 / (2 * sigma ** 2))
     
 
-    ks = 10**np.linspace(2,14, 100) 
-    plt.plot(ks , PS_func(ks))
-    plt.ylim(1e-10, 2)
-    plt.ylabel("Power spectrum")
-    plt.xlabel("k")
-    plt.xscale("log")
-    plt.yscale("log")
-    plt.show()
+    # Model A: Gaussian
+    sig =  0.3
+    As = 0.01*sig
+    kp = 5e9
+    PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
+    PS_func =  PS_model.PS_plus_vacuum        # This is the default to calculate sigma and fPBH
+
+    ks = 10**np.linspace(6,12, 300)
+    fig, axs = plt.subplots(1,3, figsize=(15,5)) 
+    ax = axs[0]
+    ax.plot(ks , PS_func(ks))
+    # ax.set_ylim(1e-10, 2)
+    ax.set_ylabel("Power spectrum")
+    ax.set_xlabel("k")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
 
     my_abundances = CLASSabundances(ps_function=PS_func)
     fpbhs = my_abundances.get_fPBH(masses)
+    fpbh_integrated =  1 # my_abundances.get_integrated_fPBH()
 
-    sol = MergerRates().get_rates_clusters(masses, fpbhs)
+
+    print(f"integrated fpbh = {fpbh_integrated}")
+
+
+    if fpbh_integrated > 10 : 
+        print(f'\n\n fpbh_integrated is way too large,  {fpbh_integrated}\n')
+        raise
+
+    if np.any(fpbhs) > 10 : 
+        print('\n\n fpbhs is way too large.\n')
+        raise
+
+
+
+
+   # EARLY BINARIES
+
+    sol = MergerRates().get_rates_early_binaries(fpbh_integrated, masses, fpbhs) 
     
-    
-    figRprim = plt.figure()
-    # figRprim.patch.set_facecolor('white')
-    ax = figRprim.add_subplot(111)
-    Z =  np.transpose(np.log10(sol))
+    ax = axs[1]
+    Z =  np.log10(sol).T
     floor = 0.0
     Z[(Z<floor)] = floor
     cs=ax.contourf(np.log10(masses),np.log10(masses),Z, levels=10) 
-    plt.title("Merging rates for primordial binaries")
-    cbar = figRprim.colorbar(cs)
-    cbar.set_label(r'$yr^{-1}Gpc^{-3}$', rotation=90)
-    #ax.set_xscale('log')
-    #ax.set_yscale('log')
-    #plt.ylim(1.e-4,1.e1)
-    plt.xlabel(r'$\log \, m_1 /M_\odot $')
-    plt.ylabel(r'$\log \, m_2 /M_\odot $')
-    plt.grid(True)
-    figRprim.savefig(PLOTSPATH + "/example_RatesPrim.png", facecolor=figRprim.get_facecolor(), edgecolor='none',dpi=300)
+    ax.set_xlabel(r'$\log_{10} \, m_1 /M_\odot $')
+    ax.set_ylabel(r'$\log_{10} \, m_2 /M_\odot $')
+    ax.set_title("Merging rates for early binaries")
+    cbar = fig.colorbar(cs)
+    cbar.set_label(r'log$_{10}$ Rates  [$yr^{-1}Gpc^{-3}$]', rotation=90)
+    ax.grid(True)
+
+
+    # LATE BINARIES
+
+    sol = MergerRates().get_rates_late_binaries(fpbh_integrated, masses, fpbhs) 
+
+    ax = axs[2]
+    Z =  np.log10(sol).T
+    floor = 0.0
+    Z[(Z<floor)] = floor
+    cs=ax.contourf(np.log10(masses),np.log10(masses),Z, levels=10) 
+    ax.set_xlabel(r'$\log_{10} \, m_1 /M_\odot $')
+    ax.set_ylabel(r'$\log_{10} \, m_2 /M_\odot $')
+    ax.set_title("Merging rates for late binaries")
+    cbar = fig.colorbar(cs)
+    cbar.set_label(r'log$_{10}$ Rates  [$yr^{-1}Gpc^{-3}$]', rotation=90)
+    ax.grid(True)
+    
+    plt.tight_layout()
     plt.show()
