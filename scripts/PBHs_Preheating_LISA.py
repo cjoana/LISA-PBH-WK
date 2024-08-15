@@ -6,12 +6,15 @@ import matplotlib.ticker as mticker
 import math
 import cmath
 from matplotlib import rc
+rc('text', usetex=True)
 
 #Plotting Configurations
-f = mticker.ScalarFormatter(useOffset=False, useMathText=True)
-g = lambda x,pos : "${}$".format(f._formatSciNotation('%1.10e' % x))
-fmt = mticker.FuncFormatter(g)
-rc('text', usetex=True)
+def fmt(x):
+    root = x/10**(np.log10(x))
+    exp = int(np.log10(x))
+    out =  r"${r:.2f}$".format(r=root) + f'$\\times 10^{{{exp}}}$ '
+    return out
+
 
 #Fixed Physical Parameters
 m_Pl=1.22*10**(19.) #non-reduced Planck mass in GeV
@@ -23,10 +26,10 @@ M_sun = 10.**(57.) #in GeV
 def P_zeta(rho_inf,rho_gamma):
 	#Consistency Checks
 	if rho_gamma>rho_inf:
-		print 'Wrong parameters inserted, rho_inf or rho_gamma. Attention: rho_inf>rho_gamma. '
+		print('Wrong parameters inserted, rho_inf or rho_gamma. Attention: rho_inf>rho_gamma. ')
 
 	elif rho_gamma/M_Pl**(4.)<(4./(125.*np.sqrt(3.)*np.pi**(5.)))*(rho_inf/M_Pl**(4.))**(5./2.):
-		print 'Too many PBHs produced, Omega_PBH>1 at the end of the preheating instabiliy.'
+		print('Too many PBHs produced, Omega_PBH>1 at the end of the preheating instabiliy.')
 
 	else:
 		H_end = np.sqrt(rho_inf/(3.*M_Pl**(2.)))
@@ -135,7 +138,7 @@ def mass(x,rho_inf,rho_gamma):
 	if x_min<x<x_max:
 		return gamma*(((3.*(M_Pl**(2)))**(3./2.))/np.sqrt(rho_inf))*(x**(-3.))/M_sun
 	else:
-		print 'Wrong parameters inserted, x, rho_inf or rho_gamma.'
+		print('Wrong parameters inserted, x, rho_inf or rho_gamma.')
 
 
 #Specifying rho_end and rho_reh
@@ -148,7 +151,12 @@ x_range = np.linspace(np.log(x_min),np.log(1.),1000)
 x_range = np.exp(x_range)
 
 #Plotting the curvature power spectrum at the end of the prehating instability
-plt.plot(x_range,P_zeta(rho_inf,rho_gamma), label=r'$\rho^{1/4}_\mathrm{inf}$' + "={}".format(fmt(rho_inf**(1./4.))) + r'$\mathrm{GeV}$, $\rho^{1/4}_\mathrm{\Gamma}$' + "={}".format(fmt(rho_gamma**(1./4.))) + r'$\mathrm{GeV}$')
+label = r'$\rho^{1/4}_\mathrm{inf}$' + "={}".format(fmt(rho_inf**(1./4.))) \
+		+ r'$\mathrm{GeV}$, $\rho^{1/4}_\mathrm{\Gamma}$' + "={}".format(fmt(rho_gamma**(1./4.)))\
+		+ r'$\mathrm{GeV}$'
+
+plt.plot(x_range,P_zeta(rho_inf,rho_gamma), \
+		 label=label)
 plt.xlabel(r'$k/k_\mathrm{end}$')
 plt.ylabel(r'$\mathcal{P}_\mathrm{\delta}(t_\mathrm{\Gamma},k/k_\mathrm{end})$')
 plt.xscale('log')

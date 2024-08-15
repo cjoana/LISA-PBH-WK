@@ -6,11 +6,18 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import math
 import cmath
-f = mticker.ScalarFormatter(useOffset=False, useMathText=True)
-g = lambda x,pos : "${}$".format(f._formatSciNotation('%1.10e' % x))
-fmt = mticker.FuncFormatter(g)
+# f = mticker.ScalarFormatter(useOffset=False, useMathText=True)
+# g = lambda x,pos : "${}$".format(f._formatSciNotation('%1.10e' % x))
+# fmt = mticker.FuncFormatter(g)
 from matplotlib import rc
 rc('text', usetex=True)
+
+#Plotting Configurations
+def fmt(x):
+    root = x/10**(np.log10(x))
+    exp = int(np.log10(x))
+    out =  r"${r:.2f}$".format(r=root) + f'$\\times 10^{{{exp}}}$ '
+    return out
 
 m_Pl = 1.22*10.**(19.) # The Planck mass
 M_Pl = m_Pl/np.sqrt(8.*np.pi) # The reduced Planck mass
@@ -67,6 +74,8 @@ def Omega_SIGW_PBH_Poisson(k,M,Omega_PBH_f):
 
     return value
 
+
+
 # Choose here a value for the PBH mass and the initital PBH abundnace at formation time.
 M_val = 5.*(10.**(7.))*c_grams_to_GeV
 Omega_PBH_f_val = 2.*10.**(-9.)
@@ -76,8 +85,12 @@ k_range = np.exp(k_range)
 
 f_range  = (k_range/(2.*np.pi))/c_GeV_to_Mpc_minus_1/c_Hz_to_GeV
 
-plt.plot(f_range,[Omega_SIGW_PBH_Poisson(k,M_val,Omega_PBH_f_val) for k in k_range],'b-',label = r'$\mathrm{SIGWs\; from\; the\; PBH\; Poisson\; Gas}$')
+OmegaSIGW = np.array([Omega_SIGW_PBH_Poisson(k,M_val,Omega_PBH_f_val) for k in k_range])
 
+
+# plotting 
+
+plt.plot(f_range, OmegaSIGW,'b-',label = r'$\mathrm{SIGWs\; from\; the\; PBH\; Poisson\; Gas}$')
 plt.xlim(xmin= 8.*10.**(-10.),xmax= 10.**(4.))
 plt.ylim(ymin=10.**(-20.),ymax=8.*10.**(-6.))
 plt.title(r'$M=5\times 10^{7}\mathrm{g}$,$\Omega_\mathrm{PBH,f}=2\times 10^{-9}$')
