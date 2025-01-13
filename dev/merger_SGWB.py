@@ -70,11 +70,6 @@ class Backgrounds(MergerRates):
             
             return integrant
 
-        #print("coucou")
-        #print(integrant(0,0,1) * np.pi /(4.*pu().G) * freq**2 / cp().rhocr)
-             
-        #hc2 = scipy.integrate.tplquad(integrant, self.zmin, self.zmax, self.logm2min, self.logm2max, self.logm1min, self.logm1max, epsrel=1.e-1)[0] 
-
         def z_integrant(z):
             Hofz = cp().H0 * np.sqrt( (cp().Omb + cp().Omc) * (1+z)**3 + cp().OmLambda) 
             z_dep = (Hofz * (1+z)**(4/3))**(-1)
@@ -101,13 +96,13 @@ class Backgrounds(MergerRates):
         return GWh2_bkg
 
 
-    def Get_GW_bkg_primordial_binary(self, freq):    
+    def Get_GW_bkg_early_binaries(self, freq):    
         
         GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_early_binaries)
         #print('gw_bkg_primordial: ', GW_bkg)
         return GW_bkg
         
-    def Get_GW_bkg_cluster_binary(self, freq):
+    def Get_GW_bkg_late_binaries(self, freq):
         GW_bkg = self.Get_GW_bkg(freq, MergerRates().rates_late_binaries)
         #print('gw_bkg_cluster: ', GW_bkg)
         return GW_bkg
@@ -141,16 +136,10 @@ if __name__ == "__main__":
     nfreq=20
     GWB_EB=np.zeros(nfreq)
     GWB_LB=np.zeros(nfreq)
-    listfreq =  np.logspace(logfmin,logfmax,nfreq)
-    
-    # for ifreq in range(nfreq):
-    #     freq= listfreq[ifreq]
-    #     # print(ifreq,freq)
-    #     GWB_EB[ifreq] = my_backgrounds.Get_GW_bkg_primordial_binary(freq)
-    #     GWB_LB[ifreq] = my_backgrounds.Get_GW_bkg_cluster_binary(freq)        
+    listfreq =  np.logspace(logfmin,logfmax,nfreq)     
 
-    GWB_EB = my_backgrounds.Get_GW_bkg_primordial_binary(listfreq)
-    GWB_LB = my_backgrounds.Get_GW_bkg_cluster_binary(listfreq)  
+    GWB_EB = my_backgrounds.Get_GW_bkg_early_binaries(listfreq)
+    GWB_LB = my_backgrounds.Get_GW_bkg_late_binaries(listfreq)  
 
     fig, ax = plt.subplots(1,1, figsize=(6, 5)) 
 
