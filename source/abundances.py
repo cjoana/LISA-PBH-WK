@@ -280,41 +280,43 @@ class CLASSabundances:
     def get_spectrum_scaling(self):
         return self.ps_scalingfactor
 
-    def get_integrated_fPBH(self, m_min=False, m_max=False):
-        m_min = m_min if m_min else 1e-10  # TODO: hardcoded  
-        m_max = m_max if m_max else 1e10   # TODO: hardcoded       
+    def get_integrated_fPBH(self, mass=None, fpbh=None, m_min=False, m_max=False):
+        
+        if isinstance(mass, bool):
+            m_min = m_min if m_min else 1e-10  # TODO: hardcoded  
+            m_max = m_max if m_max else 1e10   # TODO: hardcoded       
 
-        #mass = 10**np.linspace(np.log10(m_min),np.log10(m_max), 500)
-        mass = 10**np.linspace(-10, 15 , 1000)
-        fpbh = self.get_fPBH(mass)  # + 1e-8
+            mass = 10**np.linspace(np.log10(m_min),np.log10(m_max), 500)
+            mass = 10**np.linspace(-9,-3 , 1000)
+
+            mass = 10**np.linspace(-15,6, 500) 
+
+        if isinstance(fpbh, bool):
+            fpbh = self.get_fPBH(mass)  # + 1e-8
 
         sol = None
-        # logmass = np.log10(mass)
-        # f_fpbh = interp1d(logmass, fpbh)
-        # n_lmass = np.linspace(np.log10(m_min),np.log10(m_max), 10000)
-        # diffs = np.diff(n_lmass)
-        # dm = diffs[0]
-        # ifpbh = f_fpbh(n_lmass)
-        # sol = np.sum(ifpbh*dm)
-
-        # # sol2= integrate.quad(f_fpbh, -6, 8,  epsrel=0.0001)[0]
-
 
         massmax = mass[np.argmax(fpbh)]
-        m_min, m_max = (massmax/1000, massmax*1000)   # reduce integration window (warn)
-        m_min = m_min if m_min > 1e-6 else 1e-6  # TODO: hardcoded  
-        m_max = m_max if m_max < 1e8 else 1e8   # TODO: hardcoded 
-        f_fpbh = interp1d(mass, fpbh)
+        print(f"\n\nintegrating around mass {massmax}")
 
-        # n_lmass = np.linspace(m_min , m_max, 100000)
-        # diffs = np.diff(n_lmass)
-        # dm = diffs[0]
-        # ifpbh = f_fpbh(n_lmass)
-        # sol = np.sum(ifpbh*dm)
+        m_min, m_max = (massmax/100, massmax*100)   # reduce integration window (TODO warn)
+        m_min = m_min if m_min > m_min else m_min  
+        m_max = m_max if m_max < m_max else m_max  
+        f_logfpbh_on_logmass = interp1d(np.log(mass), np.log10(fpbh), kind='cubic')
+        
+        f_fpbh_on_logmass = lambda logm : 10**f_logfpbh_on_logmass(logm)
 
-        sol= integrate.quad(f_fpbh, m_min, m_max,  epsrel=0.01)[0]
-        # print(f'fpbh integrated =  {sol} , {sol2}, {dm}')
-        # sol = sol2
+        # integrate fpbh on d(ln mass)
+        sol= integrate.quad(f_fpbh_on_logmass, np.log(m_min), np.log(m_max),  epsrel=0.01)[0]
+
+        # Example plot (debug)
+        # logmass = np.linspace(np.log10(m_min),np.log10(m_max), 500)
+        # mass = 10**logmass
+        # y1 = f_fpbh_on_logmass(logmass) 
+        # plt.loglog(mass, y1, 'r-')
+        # plt.title(f"pbh_total {sol:.2e}, integrated around m =({m_min:.2e}, {m_max:.2e})")
+        # plt.xlim(m_min, m_max)
+        # plt.show()
 
         return sol
 
@@ -369,9 +371,11 @@ if __name__ == "__main__":
     Msun = physics_units.m_sun
 
     ## Model A: Gaussian
-    sig =  0.25
-    As = 0.01*sig
-    kp = 1e6
+    sig =  0.35
+    As = 0.00289
+    # sig =  0.3
+    # As = 0.0104438*sig
+    kp = 5e9
     PS_model = PowerSpectrum.gaussian(As=As, sigma=sig, kp=kp)
     
     ## Model B : axion_gauge
@@ -387,13 +391,13 @@ if __name__ == "__main__":
 
     ## Params range: 
     # mass = 10**np.linspace(-10,20, 1000)  #* Msun
-    mass = 10**np.linspace(-6,8, 500)  #* Msun
+    mass = 10**np.linspace(-15,6, 500)  #* Msun
 
     floor = 1e-8
     beta = a.get_beta(mass)  #+ floor
     fpbh = a.get_fPBH(mass)  + floor
     sigma = a.get_variance(mass)
-    fpbh_integrated =  a.get_integrated_fPBH()
+    fpbh_integrated =  a.get_integrated_fPBH(mass, fpbh)
 
 
     fig, axs = plt.subplots(4,1, figsize=(8,8))
@@ -434,6 +438,9 @@ if __name__ == "__main__":
     ax.set_ylabel(r"$f_{pbh}$")
     ax.set_xlabel(r"$m_{PBH}\ [M_{\rm sun}]$")
     ax.set_xlim(max(mass), min(mass))
+
+    mess = f'integrated fPBH is {fpbh_integrated}'
+    ax.set_title(mess)
 
     plt.legend()
     plt.tight_layout()

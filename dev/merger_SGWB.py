@@ -1,7 +1,10 @@
 """
 Code to evaluate SGWB originated by PBH mergers.  Code provided by Eleni and Satchiko (check?!)
 """
-
+import matplotlib.pyplot as plt
+from matplotlib import ticker, cm
+import numpy as np
+import scipy
 import sys, os
 ROOTPATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))
 SOURCEPATH = os.path.abspath(os.path.join(ROOTPATH, 'source'))
@@ -13,15 +16,23 @@ sys.path.append(PARAMSPATH)
 
 
 from abundances import CLASSabundances
-from user_params import cosmo_params, physics_units
-from default_params import p_PhysicsUnits as pu
-from default_params import p_CosmologicalParameters as cp
 from merger_rates import MergerRates
 from power_spectrum import PowerSpectrum
-import matplotlib.pyplot as plt
-from matplotlib import ticker, cm
-import numpy as np
-import scipy
+
+# from params.user_params import cosmo_params, physics_units, PBHForm
+from params.user_params import physics_units, cosmo_params, PSModels_params
+from params.user_params import Thresholds_params, MerginRates_params
+from params.user_params import verbose 
+
+
+# from abundances import CLASSabundances
+# from user_params import cosmo_params, physics_units
+# from default_params import p_PhysicsUnits as pu
+# from default_params import p_CosmologicalParameters as cp
+
+cp = cosmo_params
+pu = physics_units
+
 
 class Backgrounds(MergerRates):
     def __init__(self,abundances=None,zmin=0,zmax=100,mPBHmin=1.,mPBHmax=10.):
@@ -55,8 +66,8 @@ class Backgrounds(MergerRates):
         
         # Computation of the total GW background
         def integrant(logm1,logm2,z):
-            mc53 = 10.**logm1 * 10.**logm2 /(10.**logm1 + 10.**logm2)**(1./3.) * (pu().m_sun)**(5./3.)
-            Hofz = cp().H0 * np.sqrt( (cp().Omb + cp().Omc) * (1+z)**3 + cp().OmLambda) 
+            mc53 = 10.**logm1 * 10.**logm2 /(10.**logm1 + 10.**logm2)**(1./3.) * (pu.m_sun)**(5./3.)
+            Hofz = cp.H0 * np.sqrt( (cp.Omb + cp.Omc) * (1+z)**3 + cp.OmLambda) 
             z_dep = (Hofz * (1+z)**(4/3))**(-1)
             fPBH1 = self.my_abundances.get_fPBH(10.**logm1)
             fPBH2 = self.my_abundances.get_fPBH(10.**logm2)
@@ -64,14 +75,14 @@ class Backgrounds(MergerRates):
             if freq > fisco:
                 integrant = 0.
             else:
-                integrant = freq**(-4./3.) *(4. * pu().G**(5./3.)) / (3. * np.pi**(1./.3)\
-                             * pu().c**2) * mc53 * z_dep \
-                             * rate_model(self.fpbh_integrated, 10.**logm1,10.**logm2,fPBH1,fPBH2) / pu().year / ((1.E3*pu().mpc)**3) 
+                integrant = freq**(-4./3.) *(4. * pu.G**(5./3.)) / (3. * np.pi**(1./.3)\
+                             * pu.c**2) * mc53 * z_dep \
+                             * rate_model(self.fpbh_integrated, 10.**logm1,10.**logm2,fPBH1,fPBH2) / pu.year / ((1.E3*pu.mpc)**3) 
             
             return integrant
 
         def z_integrant(z):
-            Hofz = cp().H0 * np.sqrt( (cp().Omb + cp().Omc) * (1+z)**3 + cp().OmLambda) 
+            Hofz = cp.H0 * np.sqrt( (cp.Omb + cp.Omc) * (1+z)**3 + cp.OmLambda) 
             z_dep = (Hofz * (1+z)**(4/3))**(-1)
             return z_dep
 
@@ -79,7 +90,7 @@ class Backgrounds(MergerRates):
         zintegral = scipy.integrate.quad(z_integrant,self.zmin, self.zmax, epsrel=1.e-2) 
         hc2 = scipy.integrate.dblquad(integrant2, self.logm2min, self.logm2max, self.logm1min, self.logm1max, epsrel=1.e-6)[0]
         hc2 *= zintegral[0]/z_integrant(0)    
-        GWh2_bkg= np.pi /(4.*pu().G) * freq**2 *hc2 / cp().rhocr * cp().h**2
+        GWh2_bkg= np.pi /(4.*pu.G) * freq**2 *hc2 / cp.rhocr * cp.h**2
         
         return GWh2_bkg
 
